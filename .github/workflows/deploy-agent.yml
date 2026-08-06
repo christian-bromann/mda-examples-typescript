@@ -41,6 +41,7 @@ on:
           - daily-update
           - marketing-assistant
           - sandbox-assistant
+          - trusted-backend
 
 permissions:
   contents: read

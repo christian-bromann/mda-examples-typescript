@@ -12,6 +12,7 @@ Each subdirectory is a deployable agent project (`mda dev` / `mda deploy`).
 | [`daily-update/`](./daily-update)               | Weekday cron digest of GitHub + Slack activity, custom tools (no connectors), Slack DM delivery, durable memory |
 | [`marketing-assistant/`](./marketing-assistant) | Weekday HN (+ optional X) topic scan → tweet drafts on Slack; revise in chat, post manually                     |
 | [`sandbox-assistant/`](./sandbox-assistant)     | Supabase login → browser chat; per-thread LangSmith sandbox assistant; UI on Cloudflare Workers                 |
+| [`trusted-backend/`](./trusted-backend)         | Minimal agent behind a custom API: session cookie → proxy stamps `X-MDA-Ingress-Secret` + `X-MDA-User-Id`       |
 
 ## Requirements
 
