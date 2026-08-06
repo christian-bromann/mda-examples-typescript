@@ -3,7 +3,7 @@ description: Install deps, write deploy .env from the environment, and run mda d
 
 inputs:
   agent:
-    description: Agent project directory (e.g. sandbox-assistant)
+    description: Agent project directory (e.g. policy-desk)
     required: true
 
 runs:

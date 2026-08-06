@@ -6,7 +6,7 @@ export const LANGGRAPH_API_URL =
     : "http://localhost:2024");
 
 export const LANGGRAPH_ASSISTANT_ID =
-  import.meta.env.VITE_LANGGRAPH_ASSISTANT_ID ?? "sandbox-assistant";
+  import.meta.env.VITE_LANGGRAPH_ASSISTANT_ID ?? "policy-desk";
 
 export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? "";
 export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "";

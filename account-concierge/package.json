@@ -1,9 +1,9 @@
 {
-  "name": "trusted-backend",
+  "name": "account-concierge",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Minimal MDA agent behind a custom trusted-backend proxy.",
+  "description": "Account Concierge — member agent behind your authenticated product API (trusted-backend ingress).",
   "scripts": {
     "dev": "run-p dev:agent dev:proxy",
     "dev:agent": "mda dev .",

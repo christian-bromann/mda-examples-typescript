@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldCheckIcon } from "lucide-react";
+import { BookOpenIcon } from "lucide-react";
 import { useCallback, useState, type ChangeEvent, type FormEvent } from "react";
 
 import { Button } from "src/components/ui/button";
@@ -50,12 +50,13 @@ export function LoginScreen() {
       <div className="w-full max-w-sm space-y-8">
         <div className="space-y-3 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-2xl border bg-muted">
-            <ShieldCheckIcon className="size-6 text-primary" />
+            <BookOpenIcon className="size-6 text-primary" />
           </div>
           <div className="space-y-1">
-            <h1 className="text-xl font-semibold">Sandbox Assistant</h1>
+            <h1 className="text-xl font-semibold">Policy Desk</h1>
             <p className="text-sm text-muted-foreground">
-              Sign in with Supabase to chat with an assistant that works in an isolated sandbox.
+              Sign in to ask about handbooks and company policies — attach a file
+              and get clear guidance.
             </p>
           </div>
         </div>

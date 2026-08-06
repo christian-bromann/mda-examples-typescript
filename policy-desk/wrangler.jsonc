@@ -2,7 +2,7 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   // Cloudflare Workers static assets — hosts the Vite SPA (`dist/`).
   // The Managed Deep Agent itself deploys separately via `mda deploy`.
-  "name": "sandbox-assistant-ui",
+  "name": "policy-desk-ui",
   "compatibility_date": "2026-08-06",
   "workers_dev": true,
   "preview_urls": true,

@@ -28,13 +28,13 @@ function supabaseProjectRef(): string {
 }
 
 /**
- * Browser-direct Supabase auth for the sandbox assistant UI.
+ * Browser-direct Supabase auth for the Policy Desk UI.
  *
  * MDA verifies JWTs via JWKS — the browser sends
  * `Authorization: Bearer <access_token>` on every agent call.
  *
- * Default identity scope gives each signed-in user private threads (and thus
- * private per-thread sandboxes).
+ * Default identity scope gives each signed-in employee private threads (and
+ * thus private per-thread sandboxes for their policy uploads).
  */
 export const identity = defineIdentity({
   auth: auth.supabase({ projectRef: supabaseProjectRef() }),

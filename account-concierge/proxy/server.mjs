@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
- * Example trusted-backend proxy for Managed Deep Agents.
+ * Product API stand-in for the Account Concierge (trusted-backend ingress).
  *
  * In production this is *any* server that already owns authentication — your
  * Nest/Express/FastAPI app, BFF, API gateway, etc. That server:
- *   1. Authenticates the caller however you already do (session cookie, OAuth,
+ *   1. Authenticates the member however you already do (session cookie, OAuth,
  *      SSO, API key, …). MDA does not care about that mechanism.
- *   2. Proxies LangGraph / agent traffic to the MDA deployment.
+ *   2. Proxies LangGraph / agent traffic to the Account Concierge deployment.
  *   3. Stamps reserved ingress headers on each upstream request:
  *        X-MDA-Ingress-Secret  ← shared secret (MDA_INGRESS_SECRET), server-only
- *        X-MDA-User-Id         ← the user id *your* auth layer resolved
+ *        X-MDA-User-Id         ← the member id *your* auth layer resolved
  *
- * The client never sees the ingress secret. MDA trusts the secret, then scopes
- * threads / memory to X-MDA-User-Id.
+ * The browser / mobile client never sees the ingress secret. MDA trusts the
+ * secret, then scopes threads / memory to X-MDA-User-Id.
  *
  * This file is a tiny stand-in for that pattern:
  *   GET /login?user=alice  → toy httpOnly session
@@ -248,7 +248,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`trusted-backend proxy on http://127.0.0.1:${PORT}`);
+  console.log(`account-concierge proxy on http://127.0.0.1:${PORT}`);
   console.log(`  upstream: ${UPSTREAM}`);
   console.log(`  login:    curl -c cookies.txt 'http://127.0.0.1:${PORT}/login?user=alice'`);
   if (!INGRESS_SECRET) {

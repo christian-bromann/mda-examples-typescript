@@ -1,8 +1,8 @@
 "use client";
 
 import {
+  BookOpenIcon,
   FileTextIcon,
-  FolderCodeIcon,
   LogOutIcon,
   PaperclipIcon,
   PlusIcon,
@@ -33,7 +33,8 @@ import { useThreadIdParam } from "src/lib/thread-id";
 import { useAuthedFetch } from "src/lib/auth/fetch";
 
 const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
-const DEFAULT_UPLOAD_PROMPT = "What is in this file?";
+const DEFAULT_UPLOAD_PROMPT =
+  "Summarize this policy and highlight what employees should know.";
 
 /** Keep in sync with middleware/stage-chat-uploads.ts allowlists. */
 const UPLOAD_ACCEPT = [
@@ -147,9 +148,9 @@ function AttachFileButton() {
   const attachments = usePromptInputAttachments();
   return (
     <PromptInputButton
-      tooltip="Attach file (PDF or text)"
+      tooltip="Attach policy or handbook (PDF or text)"
       onClick={() => attachments.openFileDialog()}
-      aria-label="Attach file"
+      aria-label="Attach policy file"
     >
       <PaperclipIcon className="size-4" />
     </PromptInputButton>
@@ -201,8 +202,8 @@ function ChatSession({ userLabel, authHeaders, onSignOut }: ChatSessionProps) {
     <>
       <header className="flex shrink-0 items-center justify-between gap-2 border-b px-3 py-2.5 sm:px-4">
         <div className="flex min-w-0 items-center gap-2">
-          <FolderCodeIcon className="size-4 shrink-0 text-primary" />
-          <span className="truncate text-sm font-semibold">Sandbox Assistant</span>
+          <BookOpenIcon className="size-4 shrink-0 text-primary" />
+          <span className="truncate text-sm font-semibold">Policy Desk</span>
           {userLabel && (
             <span className="hidden truncate text-xs text-muted-foreground sm:inline">
               {userLabel}
@@ -252,7 +253,7 @@ function ChatSession({ userLabel, authHeaders, onSignOut }: ChatSessionProps) {
               maxFileSize={MAX_UPLOAD_BYTES}
               onSubmit={handleSubmit}
               onError={(err) => {
-                console.warn("[sandbox-assistant] attachment error:", err.message);
+                console.warn("[policy-desk] attachment error:", err.message);
               }}
               className="w-full rounded-xl"
             >
@@ -260,7 +261,7 @@ function ChatSession({ userLabel, authHeaders, onSignOut }: ChatSessionProps) {
               <PromptInputBody>
                 <PromptInputTextarea
                   value={inputText}
-                  placeholder="Ask about an attached file, or request a sandbox script…"
+                  placeholder="Ask about PTO, expenses, remote work… or attach a policy"
                   className="min-h-16 px-3 py-3 leading-relaxed"
                   onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
                     setInputText(e.target.value)
@@ -320,8 +321,8 @@ export function ChatApp({
       <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
         <header className="flex shrink-0 items-center justify-between gap-2 border-b px-3 py-2.5 sm:px-4">
           <div className="flex min-w-0 items-center gap-2">
-            <FolderCodeIcon className="size-4 shrink-0 text-primary" />
-            <span className="truncate text-sm font-semibold">Sandbox Assistant</span>
+            <BookOpenIcon className="size-4 shrink-0 text-primary" />
+            <span className="truncate text-sm font-semibold">Policy Desk</span>
           </div>
           <Button
             variant="ghost"
@@ -340,7 +341,7 @@ export function ChatApp({
             Cannot reach <span className="font-mono break-all">{apiUrl}</span>. In a
             separate terminal, run{" "}
             <span className="font-mono">npm run dev</span> from{" "}
-            <span className="font-mono">sandbox-assistant/</span>, or set{" "}
+            <span className="font-mono">policy-desk/</span>, or set{" "}
             <span className="font-mono">VITE_LANGGRAPH_API_URL</span> to your deployment.
           </p>
         </div>

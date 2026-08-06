@@ -1,5 +1,5 @@
 # Deploy a Managed Deep Agent example to LangSmith via `mda deploy`.
-# For sandbox-assistant, also builds and deploys the Vite UI to Cloudflare.
+# For policy-desk, also builds and deploys the Vite UI to Cloudflare.
 #
 # Run from the Actions tab → "Deploy agent" → Run workflow.
 #
@@ -16,15 +16,15 @@
 #   LANGSMITH_WORKSPACE_ID    # org-scoped keys / multi-workspace
 #   LANGSMITH_ENDPOINT        # non-default LangSmith API host
 #   X_BEARER_TOKEN            # marketing-assistant X reads
-#   MDA_GUEST_SIGNING_KEY     # sandbox-assistant identity
-#   VITE_SUPABASE_URL         # sandbox-assistant identity + UI
+#   MDA_GUEST_SIGNING_KEY     # policy-desk identity
+#   VITE_SUPABASE_URL         # policy-desk identity + UI
 #
-# sandbox-assistant UI (Cloudflare) secrets — used only when that agent is selected:
+# policy-desk UI (Cloudflare) secrets — used only when that agent is selected:
 #   CLOUDFLARE_API_TOKEN
 #   CLOUDFLARE_ACCOUNT_ID
 #   VITE_SUPABASE_ANON_KEY
 #   VITE_LANGGRAPH_API_URL
-#   VITE_LANGGRAPH_ASSISTANT_ID   # optional; default sandbox-assistant
+#   VITE_LANGGRAPH_ASSISTANT_ID   # optional; default policy-desk
 #
 # Add new agents to `on.workflow_dispatch.inputs.agent.options` as they land.
 
@@ -40,8 +40,8 @@ on:
         options:
           - daily-update
           - marketing-assistant
-          - sandbox-assistant
-          - trusted-backend
+          - policy-desk
+          - account-concierge
 
 permissions:
   contents: read
@@ -81,10 +81,10 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
 
       - name: Deploy Cloudflare UI
-        if: inputs.agent == 'sandbox-assistant'
+        if: inputs.agent == 'policy-desk'
         uses: ./.github/actions/deploy-cloudflare-ui
         with:
-          working-directory: sandbox-assistant
+          working-directory: policy-desk
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         env:

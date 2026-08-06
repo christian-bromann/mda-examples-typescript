@@ -1,9 +1,9 @@
 {
-  "name": "sandbox-assistant",
+  "name": "policy-desk",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Supabase-authenticated assistant with a per-thread LangSmith sandbox for files and shell.",
+  "description": "Policy Desk — authenticated company policy assistant with upload + sandbox Q&A.",
   "scripts": {
     "dev": "run-p dev:agent dev:ui",
     "dev:agent": "mda dev . --no-browser",

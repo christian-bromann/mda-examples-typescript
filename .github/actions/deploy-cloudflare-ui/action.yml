@@ -5,7 +5,7 @@ inputs:
   working-directory:
     description: Project directory containing package.json and wrangler.jsonc
     required: true
-    default: sandbox-assistant
+    default: policy-desk
   cloudflare-api-token:
     description: Cloudflare API token
     required: true

@@ -1,21 +1,23 @@
-# sandbox-assistant
+# Policy Desk
 
-A **Supabase-authenticated** Managed Deep Agent that works as a hands-on
-assistant inside a **per-thread LangSmith sandbox** (files + shell).
+An employee-facing **Policy Desk**: staff sign in, drop a handbook or policy PDF,
+and get concrete guidance (“How many PTO days in year one?”, “Can I expense this
+laptop?”). Each conversation runs in a **per-thread LangSmith sandbox** so the
+agent can extract text, annotate sections, and work from the files they uploaded.
 
-1. Sign in via Supabase email/password (browser UI)
-2. Ask the agent to write scripts, transform data, or run experiments
-3. Or **attach a PDF or text file**, stage it in the sandbox, and ask questions
-4. It uses sandbox filesystem tools and `execute` in an isolated environment
+1. Sign in with your company account (Supabase email/password in this demo)
+2. Attach a handbook, PTO policy, expense guidelines, or other policy doc
+3. Ask what applies to your situation — or ask the desk to summarize / compare
+4. The agent stages uploads under `/workspace/uploads/`, reads or extracts them
+   in an isolated sandbox, and answers with citations from the file
 
-This shows how little it takes to put an MDA behind Supabase login *and* give it
-a real workspace: `auth.supabase({ projectRef })` for identity, plus
-`sandboxes.langsmith(...)` for isolated execution.
+Technically this shows Supabase JWT identity (`auth.supabase`) plus a managed
+sandbox (`sandboxes.langsmith`) behind a browser chat UI.
 
 ## Layout
 
 ```text
-sandbox-assistant/
+policy-desk/
   agent.ts                 # defineDeepAgent + staging middleware
   identity.ts              # auth.supabase({ projectRef })
   memory.ts                # defineMemory({ scope: "agent" }) — procedural only
@@ -29,17 +31,19 @@ sandbox-assistant/
 
 ## What this demonstrates
 
+- **Use case** — authenticated Policy Desk: upload policies → ask → get guidance
 - **Supabase login** — JWKS `validated_token` identity (browser Bearer token)
 - **Managed sandbox** — per-thread LangSmith sandbox (files + shell)
 - **File Q&A** — chat upload → stage to `/workspace/uploads/` → read text (or `pypdf` for PDFs) → answer
 - **Browser chat** — `@langchain/react` `useStream` + Vite proxy locally
-- **Private threads** — default identity scope isolates conversations per user
+- **Private threads** — default identity scope isolates conversations per employee
 
-## Upload a file
+## Upload a policy
 
 1. Click the paperclip and choose a PDF or text file (`.txt`, `.md`, `.csv`, `.json`,
    source code, … — up to ~4MB).
-2. Ask a question (or send with an empty prompt — defaults to “What is in this file?”).
+2. Ask a question (or send with an empty prompt — defaults to a policy summary
+   request).
 3. Middleware stages the file under `/workspace/uploads/`.
 4. **Text files** — the agent `read_file`s them directly. **PDFs** — it installs
    `pypdf` on demand, extracts to a sibling `.txt`, then answers from that text.
@@ -52,7 +56,7 @@ sandbox-assistant/
    `VITE_SUPABASE_URL` (`https://<project-ref>.supabase.co`).
 
 ```bash
-cd sandbox-assistant
+cd policy-desk
 cp env.example .env
 ```
 
@@ -64,7 +68,7 @@ cp env.example .env
 | `VITE_SUPABASE_URL` | UI (build-time) | Publishable URL |
 | `VITE_SUPABASE_ANON_KEY` | UI (build-time) | Publishable / anon key |
 | `VITE_LANGGRAPH_API_URL` | UI (build-time) | Required for Cloudflare / remote UI |
-| `VITE_LANGGRAPH_ASSISTANT_ID` | UI (build-time) | Default `sandbox-assistant` |
+| `VITE_LANGGRAPH_ASSISTANT_ID` | UI (build-time) | Default `policy-desk` |
 
 ## Run locally
 
@@ -75,8 +79,9 @@ npm run dev
 Starts the agent (`:2024`) and UI (`:4900`) together. Open
 [http://localhost:4900](http://localhost:4900), sign in, then try:
 
-- “Create a workspace and write a hello.py, then run it”
-- Attach a `.md` / `.txt` / PDF and ask “What are the main sections?”
+- Attach an employee handbook PDF and ask “How many PTO days do I get in year one?”
+- Drop expense guidelines and ask “Can I expense a standing desk?”
+- Attach a remote-work policy and ask “Summarize the main rules for hybrid staff”
 
 Leave `VITE_LANGGRAPH_API_URL` unset locally (Vite proxies to `:2024`).
 
@@ -95,7 +100,7 @@ npm run deploy:agent
 npm run deploy:ui
 ```
 
-Or use **Actions → Deploy agent → Run workflow** and pick `sandbox-assistant`.
+Or use **Actions → Deploy agent → Run workflow** and pick `policy-desk`.
 That deploys the agent to LangSmith and the UI to Cloudflare (needs
 `CLOUDFLARE_*` plus the `VITE_*` secrets above).
 
