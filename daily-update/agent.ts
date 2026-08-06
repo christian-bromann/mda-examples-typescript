@@ -13,6 +13,7 @@ import { searchSlackMessages } from "./tools/search-slack-messages.js";
  * Slack DM delivery from `schedules/morning-digest.ts`, and durable notes under
  * `/memories/agent/daily/`. System prompt from `instructions.md`.
  *
+ * Durable memory requires root `memory.ts` (`defineMemory({ scope: "agent" })`).
  * GitHub and Slack access use deployment secrets (`GITHUB_TOKEN`,
  * `SLACK_USER_TOKEN`) from `.env` — not connectors.
  */

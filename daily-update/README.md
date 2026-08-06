@@ -22,7 +22,8 @@ live in `.env`, and the agent calls them through custom LangChain tools under
 ```text
 daily-update/
   agent.ts                      # defineDeepAgent + tool wiring
-  identity.ts                   # trusted-backend + agent memory
+  identity.ts                   # trusted-backend ingress
+  memory.ts                     # defineMemory({ scope: "agent" }) — required for Context Hub
   instructions.md
   tools/                        # GitHub + Slack Web API tools
   channels/slack.ts             # DMs / mentions (bot token)

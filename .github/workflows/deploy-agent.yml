@@ -14,6 +14,7 @@
 # Optional repository secrets:
 #   LANGSMITH_WORKSPACE_ID    # org-scoped keys / multi-workspace
 #   LANGSMITH_ENDPOINT        # non-default LangSmith API host
+#   X_BEARER_TOKEN            # marketing-assistant X reads
 #
 # Add new agents to `on.workflow_dispatch.inputs.agent.options` as they land.
 
@@ -28,6 +29,7 @@ on:
         type: choice
         options:
           - daily-update
+          - marketing-assistant
 
 permissions:
   contents: read
@@ -80,6 +82,7 @@ jobs:
           SLACK_SIGNING_SECRET: ${{ secrets.SLACK_SIGNING_SECRET }}
           SLACK_USER_TOKEN: ${{ secrets.SLACK_USER_TOKEN }}
           MDA_GITHUB_TOKEN: ${{ secrets.MDA_GITHUB_TOKEN }}
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
         run: |
           if [ -z "$LANGSMITH_API_KEY" ]; then
             echo "::error::Missing repository secret LANGSMITH_API_KEY"
@@ -110,6 +113,7 @@ jobs:
           write_env SLACK_USER_TOKEN "$SLACK_USER_TOKEN"
           # Agent tools expect GITHUB_TOKEN; Actions reserves that name for its own token.
           write_env GITHUB_TOKEN "$MDA_GITHUB_TOKEN"
+          write_env X_BEARER_TOKEN "$X_BEARER_TOKEN"
 
           echo "Wrote .env with $(grep -c '=' .env) keys (values redacted)."
 
