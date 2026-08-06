@@ -1,0 +1,28 @@
+{
+  "name": "daily-update",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Weekday GitHub + Slack activity digest → Slack DM + durable memory.",
+  "scripts": {
+    "dev": "mda dev .",
+    "deploy": "mda deploy . --name daily-update",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@langchain/core": "1.2.4",
+    "@octokit/rest": "^22.0.1",
+    "@slack/web-api": "^7.13.0",
+    "langchain": "1.5.4",
+    "managed-deepagents": "file:/Users/christian.bromann/Sites/LangChain/managed-deepagents-sdk/packages/npm",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "@langchain/core": "1.2.4",
+    "langchain": "1.5.4"
+  }
+}

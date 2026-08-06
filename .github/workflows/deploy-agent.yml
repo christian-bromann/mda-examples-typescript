@@ -1,0 +1,122 @@
+# Deploy a Managed Deep Agent example to LangSmith via `mda deploy`.
+#
+# Run from the Actions tab → "Deploy agent" → Run workflow.
+#
+# Required repository secrets:
+#   LANGSMITH_API_KEY
+#   OPENAI_API_KEY
+#   MDA_INGRESS_SECRET
+#   SLACK_BOT_TOKEN
+#   SLACK_SIGNING_SECRET
+#   SLACK_USER_TOKEN
+#   MDA_GITHUB_TOKEN          # personal GitHub PAT (not the Actions GITHUB_TOKEN)
+#
+# Optional repository secrets:
+#   LANGSMITH_WORKSPACE_ID    # org-scoped keys / multi-workspace
+#   LANGSMITH_ENDPOINT        # non-default LangSmith API host
+#
+# Add new agents to `on.workflow_dispatch.inputs.agent.options` as they land.
+
+name: Deploy agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      agent:
+        description: Agent project directory to deploy
+        required: true
+        type: choice
+        options:
+          - daily-update
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-agent-${{ inputs.agent }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.agent }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate agent directory
+        run: |
+          if [ ! -f "${{ inputs.agent }}/package.json" ] || [ ! -f "${{ inputs.agent }}/agent.ts" ]; then
+            echo "::error::'${{ inputs.agent }}' is not a deployable agent project"
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: ${{ inputs.agent }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ inputs.agent }}
+        run: |
+          # Local clones may pin managed-deepagents via file:; CI always uses npm.
+          npm pkg set 'dependencies.managed-deepagents=dev'
+          rm -f package-lock.json
+          npm install
+
+      - name: Write deploy .env
+        working-directory: ${{ inputs.agent }}
+        env:
+          LANGSMITH_API_KEY: ${{ secrets.LANGSMITH_API_KEY }}
+          LANGSMITH_WORKSPACE_ID: ${{ secrets.LANGSMITH_WORKSPACE_ID }}
+          LANGSMITH_ENDPOINT: ${{ secrets.LANGSMITH_ENDPOINT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MDA_INGRESS_SECRET: ${{ secrets.MDA_INGRESS_SECRET }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_SIGNING_SECRET: ${{ secrets.SLACK_SIGNING_SECRET }}
+          SLACK_USER_TOKEN: ${{ secrets.SLACK_USER_TOKEN }}
+          MDA_GITHUB_TOKEN: ${{ secrets.MDA_GITHUB_TOKEN }}
+        run: |
+          if [ -z "$LANGSMITH_API_KEY" ]; then
+            echo "::error::Missing repository secret LANGSMITH_API_KEY"
+            exit 1
+          fi
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "::error::Missing repository secret OPENAI_API_KEY"
+            exit 1
+          fi
+
+          umask 077
+          : > .env
+          write_env() {
+            local key="$1"
+            local value="$2"
+            if [ -n "$value" ]; then
+              printf '%s=%s\n' "$key" "$value" >> .env
+            fi
+          }
+
+          write_env LANGSMITH_API_KEY "$LANGSMITH_API_KEY"
+          write_env LANGSMITH_WORKSPACE_ID "$LANGSMITH_WORKSPACE_ID"
+          write_env LANGSMITH_ENDPOINT "$LANGSMITH_ENDPOINT"
+          write_env OPENAI_API_KEY "$OPENAI_API_KEY"
+          write_env MDA_INGRESS_SECRET "$MDA_INGRESS_SECRET"
+          write_env SLACK_BOT_TOKEN "$SLACK_BOT_TOKEN"
+          write_env SLACK_SIGNING_SECRET "$SLACK_SIGNING_SECRET"
+          write_env SLACK_USER_TOKEN "$SLACK_USER_TOKEN"
+          # Agent tools expect GITHUB_TOKEN; Actions reserves that name for its own token.
+          write_env GITHUB_TOKEN "$MDA_GITHUB_TOKEN"
+
+          echo "Wrote .env with $(grep -c '=' .env) keys (values redacted)."
+
+      - name: Deploy with mda
+        working-directory: ${{ inputs.agent }}
+        env:
+          AGENT: ${{ inputs.agent }}
+        run: |
+          echo "Deploying '$AGENT' as prod"
+          npx mda deploy . --name "$AGENT" --deployment-type prod
