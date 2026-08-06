@@ -1,0 +1,55 @@
+name: Deploy Cloudflare UI
+description: Build a Vite UI and deploy it to Cloudflare Workers via wrangler.
+
+inputs:
+  working-directory:
+    description: Project directory containing package.json and wrangler.jsonc
+    required: true
+    default: sandbox-assistant
+  cloudflare-api-token:
+    description: Cloudflare API token
+    required: true
+  cloudflare-account-id:
+    description: Cloudflare account ID
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+        cache: npm
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        # Local clones may pin managed-deepagents via file:; CI always uses npm.
+        npm pkg set 'dependencies.managed-deepagents=dev'
+        rm -f package-lock.json
+        npm install
+
+    - name: Build UI
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
+          echo "::error::Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY"
+          exit 1
+        fi
+        if [ -z "$VITE_LANGGRAPH_API_URL" ]; then
+          echo "::error::Missing VITE_LANGGRAPH_API_URL (LangSmith MDA deployment URL)"
+          exit 1
+        fi
+        npm run build:ui
+
+    - name: Deploy to Cloudflare
+      uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ inputs.cloudflare-api-token }}
+        accountId: ${{ inputs.cloudflare-account-id }}
+        workingDirectory: ${{ inputs.working-directory }}
+        command: deploy

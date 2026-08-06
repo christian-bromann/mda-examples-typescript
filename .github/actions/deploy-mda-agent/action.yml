@@ -1,0 +1,84 @@
+name: Deploy MDA agent
+description: Install deps, write deploy .env from the environment, and run mda deploy.
+
+inputs:
+  agent:
+    description: Agent project directory (e.g. sandbox-assistant)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Validate agent directory
+      shell: bash
+      run: |
+        if [ ! -f "${{ inputs.agent }}/package.json" ] || [ ! -f "${{ inputs.agent }}/agent.ts" ]; then
+          echo "::error::'${{ inputs.agent }}' is not a deployable agent project"
+          exit 1
+        fi
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+        cache: npm
+        cache-dependency-path: ${{ inputs.agent }}/package-lock.json
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.agent }}
+      run: |
+        # Local clones may pin managed-deepagents via file:; CI always uses npm.
+        npm pkg set 'dependencies.managed-deepagents=dev'
+        rm -f package-lock.json
+        npm install
+
+    - name: Write deploy .env
+      shell: bash
+      working-directory: ${{ inputs.agent }}
+      run: |
+        if [ -z "$LANGSMITH_API_KEY" ]; then
+          echo "::error::Missing repository secret LANGSMITH_API_KEY"
+          exit 1
+        fi
+        if [ -z "$OPENAI_API_KEY" ]; then
+          echo "::error::Missing repository secret OPENAI_API_KEY"
+          exit 1
+        fi
+
+        umask 077
+        : > .env
+        write_env() {
+          local key="$1"
+          local value="$2"
+          if [ -n "$value" ]; then
+            printf '%s=%s\n' "$key" "$value" >> .env
+          fi
+        }
+
+        write_env LANGSMITH_API_KEY "$LANGSMITH_API_KEY"
+        write_env LANGSMITH_WORKSPACE_ID "$LANGSMITH_WORKSPACE_ID"
+        write_env LANGSMITH_ENDPOINT "$LANGSMITH_ENDPOINT"
+        write_env OPENAI_API_KEY "$OPENAI_API_KEY"
+        write_env MDA_INGRESS_SECRET "$MDA_INGRESS_SECRET"
+        write_env SLACK_BOT_TOKEN "$SLACK_BOT_TOKEN"
+        write_env SLACK_SIGNING_SECRET "$SLACK_SIGNING_SECRET"
+        write_env SLACK_USER_TOKEN "$SLACK_USER_TOKEN"
+        # Agent tools expect GITHUB_TOKEN; Actions reserves that name for its own token.
+        write_env GITHUB_TOKEN "$MDA_GITHUB_TOKEN"
+        write_env X_BEARER_TOKEN "$X_BEARER_TOKEN"
+        write_env MDA_GUEST_SIGNING_KEY "$MDA_GUEST_SIGNING_KEY"
+        write_env SUPABASE_PROJECT_REF "$SUPABASE_PROJECT_REF"
+        write_env SUPABASE_URL "$SUPABASE_URL"
+        write_env VITE_SUPABASE_URL "$VITE_SUPABASE_URL"
+
+        echo "Wrote .env with $(grep -c '=' .env) keys (values redacted)."
+
+    - name: Deploy with mda
+      shell: bash
+      working-directory: ${{ inputs.agent }}
+      env:
+        AGENT: ${{ inputs.agent }}
+      run: |
+        echo "Deploying '$AGENT' as prod"
+        npx mda deploy . --name "$AGENT" --deployment-type prod
