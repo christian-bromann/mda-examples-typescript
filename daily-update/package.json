@@ -6,7 +6,7 @@
   "description": "Weekday GitHub + Slack activity digest → Slack DM + durable memory.",
   "scripts": {
     "dev": "mda dev .",
-    "deploy": "mda deploy . --name daily-update",
+    "deploy": "mda deploy .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
