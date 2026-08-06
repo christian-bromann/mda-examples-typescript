@@ -9,7 +9,7 @@
 #   SLACK_BOT_TOKEN
 #   SLACK_SIGNING_SECRET
 #   SLACK_USER_TOKEN
-#   MDA_GITHUB_TOKEN          # personal GitHub PAT (not the Actions GITHUB_TOKEN)
+#   MDA_GITHUB_TOKEN
 #
 # Optional repository secrets:
 #   LANGSMITH_WORKSPACE_ID    # org-scoped keys / multi-workspace

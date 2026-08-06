@@ -7,13 +7,13 @@ Each subdirectory is a deployable agent project (`mda dev` / `mda deploy`).
 
 ## Examples
 
-| Example | What it shows |
-| --- | --- |
+| Example                           | What it shows                                                                                                   |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | [`daily-update/`](./daily-update) | Weekday cron digest of GitHub + Slack activity, custom tools (no connectors), Slack DM delivery, durable memory |
 
 ## Requirements
 
-- Node.js 22+
+- Node.js 24+
 - A LangSmith account with Managed Deep Agents access
 - The `mda` CLI (`npm install -g managed-deepagents@dev` or via each example’s
   local `node_modules`)
@@ -39,13 +39,13 @@ Configure these repository secrets first (Settings → Secrets and variables →
 Actions). Use `MDA_GITHUB_TOKEN` for your personal GitHub PAT — Actions already
 owns the name `GITHUB_TOKEN`.
 
-| Secret | Required |
-| --- | --- |
-| `LANGSMITH_API_KEY` | yes |
-| `OPENAI_API_KEY` | yes |
-| `MDA_INGRESS_SECRET` | for Slack channels |
-| `SLACK_BOT_TOKEN` | for Slack channels |
-| `SLACK_SIGNING_SECRET` | for Slack channels |
-| `SLACK_USER_TOKEN` | for Slack search tools |
-| `MDA_GITHUB_TOKEN` | for GitHub tools |
+| Secret                   | Required                  |
+| ------------------------ | ------------------------- |
+| `LANGSMITH_API_KEY`      | yes                       |
+| `OPENAI_API_KEY`         | yes                       |
+| `MDA_INGRESS_SECRET`     | trusted-backend           |
+| `SLACK_BOT_TOKEN`        | for Slack channels        |
+| `SLACK_SIGNING_SECRET`   | for Slack channels        |
+| `SLACK_USER_TOKEN`       | for Slack search tools    |
+| `MDA_GITHUB_TOKEN`       | for GitHub tools          |
 | `LANGSMITH_WORKSPACE_ID` | if your key is org-scoped |

@@ -6,7 +6,9 @@ import { channels } from "managed-deepagents";
  * Events URL after deploy:
  *   `https://<deployment>/channels/slack/events`
  *
- * Secrets: `SLACK_SIGNING_SECRET`, `SLACK_BOT_TOKEN`, `MDA_INGRESS_SECRET`.
+ * Secrets: `SLACK_SIGNING_SECRET`, `SLACK_BOT_TOKEN` (Events path is Slack-signed
+ * only). `MDA_INGRESS_SECRET` is for trusted-backend loopback into the graph,
+ * not Slack webhook auth.
  * Digest framing uses authored Slack tools + `SLACK_USER_TOKEN` (user token),
  * not this bot token.
  *
