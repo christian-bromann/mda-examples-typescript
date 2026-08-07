@@ -24,7 +24,6 @@
 #   CLOUDFLARE_ACCOUNT_ID
 #   VITE_SUPABASE_ANON_KEY
 #   POLICY_DESK_DEPLOYMENT_API    # LangSmith MDA URL after first agent deploy
-#   VITE_LANGGRAPH_ASSISTANT_ID   # optional; default mda-example-policy-desk-ts
 #
 # Add new agents to `on.workflow_dispatch.inputs.agent.options` as they land.
 
@@ -90,4 +89,3 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           POLICY_DESK_DEPLOYMENT_API: ${{ secrets.POLICY_DESK_DEPLOYMENT_API }}
-          VITE_LANGGRAPH_ASSISTANT_ID: ${{ secrets.VITE_LANGGRAPH_ASSISTANT_ID }}

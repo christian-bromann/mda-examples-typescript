@@ -69,7 +69,6 @@ cp env.example .env
 | `VITE_SUPABASE_ANON_KEY` | UI (build-time) | Publishable / anon key |
 | `VITE_LANGGRAPH_API_URL` | UI (build-time) | Required for local Cloudflare deploy; leave unset for Vite proxy |
 | `POLICY_DESK_DEPLOYMENT_API` | GitHub Actions secret | LangSmith MDA URL — mapped to `VITE_LANGGRAPH_API_URL` in CI |
-| `VITE_LANGGRAPH_ASSISTANT_ID` | UI (build-time) | Default `mda-example-policy-desk-ts` |
 | `CLOUDFLARE_API_TOKEN` | wrangler | Workers deploy (`npm run deploy`) |
 | `CLOUDFLARE_ACCOUNT_ID` | wrangler | Cloudflare account ID |
 

@@ -5,8 +5,8 @@ export const LANGGRAPH_API_URL =
     ? `${window.location.origin}/api/langgraph`
     : "http://localhost:2024");
 
-export const LANGGRAPH_ASSISTANT_ID =
-  import.meta.env.VITE_LANGGRAPH_ASSISTANT_ID ?? "mda-example-policy-desk-ts";
+/** Must match `name` in `agent.ts`. */
+export const LANGGRAPH_ASSISTANT_ID = "mda-example-policy-desk-ts";
 
 export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? "";
 export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "";
