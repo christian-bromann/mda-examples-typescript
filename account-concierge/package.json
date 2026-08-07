@@ -14,7 +14,7 @@
   "dependencies": {
     "@langchain/core": "1.2.4",
     "langchain": "1.5.4",
-    "managed-deepagents": "file:/Users/christian.bromann/Sites/LangChain/managed-deepagents-sdk/packages/npm",
+    "managed-deepagents": "0.4.3-dev.95",
     "zod": "^4.4.3"
   },
   "devDependencies": {

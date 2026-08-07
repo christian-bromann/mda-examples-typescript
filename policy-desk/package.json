@@ -38,7 +38,7 @@
     "cmdk": "^1.1.1",
     "langchain": "1.5.4",
     "lucide-react": "^1.16.0",
-    "managed-deepagents": "file:/Users/christian.bromann/Sites/LangChain/managed-deepagents-sdk/packages/npm",
+    "managed-deepagents": "0.4.3-dev.95",
     "motion": "^12.40.0",
     "nanoid": "^5.1.11",
     "react": "19.2.7",

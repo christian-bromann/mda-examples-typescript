@@ -1,7 +1,7 @@
 import { defineIdentity } from "managed-deepagents";
 
 /**
- * Trusted-backend identity for the Account Concierge (the MDA default).
+ * Trusted-backend identity for the Account Concierge.
  *
  * Your product API authenticates the member (session cookie, OAuth, SSO, …),
  * then proxies LangGraph requests with:
@@ -11,4 +11,6 @@ import { defineIdentity } from "managed-deepagents";
  * The client never sees the ingress secret. See `proxy/server.mjs` for a
  * stand-in product API.
  */
-export const identity = defineIdentity();
+export const identity = defineIdentity({
+  auth: "backend",
+});
