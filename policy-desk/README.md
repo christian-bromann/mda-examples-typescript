@@ -67,7 +67,8 @@ cp env.example .env
 | `MDA_GUEST_SIGNING_KEY` | agent | Random string (identity runtime) |
 | `VITE_SUPABASE_URL` | UI (build-time) | Publishable URL |
 | `VITE_SUPABASE_ANON_KEY` | UI (build-time) | Publishable / anon key |
-| `VITE_LANGGRAPH_API_URL` | UI (build-time) | Required for Cloudflare / remote UI |
+| `VITE_LANGGRAPH_API_URL` | UI (build-time) | Required for local Cloudflare deploy; leave unset for Vite proxy |
+| `POLICY_DESK_DEPLOYMENT_API` | GitHub Actions secret | LangSmith MDA URL — mapped to `VITE_LANGGRAPH_API_URL` in CI |
 | `VITE_LANGGRAPH_ASSISTANT_ID` | UI (build-time) | Default `mda-example-policy-desk-ts` |
 | `CLOUDFLARE_API_TOKEN` | wrangler | Workers deploy (`npm run deploy`) |
 | `CLOUDFLARE_ACCOUNT_ID` | wrangler | Cloudflare account ID |
@@ -101,7 +102,8 @@ Use `npm run deploy:agent` or `npm run deploy:ui` to run either step alone.
 
 Or use **Actions → Deploy agent → Run workflow** and pick `policy-desk`.
 That deploys the agent to LangSmith and the UI to Cloudflare (needs
-`CLOUDFLARE_*` plus the `VITE_*` secrets above).
+`CLOUDFLARE_*`, the `VITE_*` secrets above, and `POLICY_DESK_DEPLOYMENT_API`
+set to the LangSmith MDA URL after the first agent deploy).
 
 ## Security notes
 
