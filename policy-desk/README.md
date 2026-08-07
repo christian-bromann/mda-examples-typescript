@@ -69,6 +69,8 @@ cp env.example .env
 | `VITE_SUPABASE_ANON_KEY` | UI (build-time) | Publishable / anon key |
 | `VITE_LANGGRAPH_API_URL` | UI (build-time) | Required for Cloudflare / remote UI |
 | `VITE_LANGGRAPH_ASSISTANT_ID` | UI (build-time) | Default `mda-example-policy-desk-ts` |
+| `CLOUDFLARE_API_TOKEN` | wrangler | Workers deploy (`npm run deploy`) |
+| `CLOUDFLARE_ACCOUNT_ID` | wrangler | Cloudflare account ID |
 
 ## Run locally
 
@@ -87,18 +89,15 @@ Leave `VITE_LANGGRAPH_API_URL` unset locally (Vite proxies to `:2024`).
 
 ## Deploy
 
-### 1. Agent (LangSmith)
-
-```bash
-npm run deploy:agent
-```
-
-### 2. UI (Cloudflare)
+Deploys the agent to LangSmith, then builds and deploys the UI to Cloudflare:
 
 ```bash
 # Set VITE_LANGGRAPH_API_URL to the LangSmith deployment URL first
-npm run deploy:ui
+# (or re-run after the first deploy once you have the URL)
+npm run deploy
 ```
+
+Use `npm run deploy:agent` or `npm run deploy:ui` to run either step alone.
 
 Or use **Actions → Deploy agent → Run workflow** and pick `policy-desk`.
 That deploys the agent to LangSmith and the UI to Cloudflare (needs

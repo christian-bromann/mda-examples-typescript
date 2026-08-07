@@ -8,7 +8,7 @@
     "dev": "run-p dev:agent dev:ui",
     "dev:agent": "mda dev . --no-browser",
     "dev:ui": "vite --port 4900",
-    "deploy": "mda deploy .",
+    "deploy": "npm run deploy:agent && npm run deploy:ui",
     "deploy:agent": "mda deploy .",
     "deploy:ui": "npm run build:ui && wrangler deploy",
     "build:ui": "vite build",
