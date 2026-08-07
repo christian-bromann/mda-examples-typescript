@@ -342,7 +342,8 @@ export function ChatApp({
             separate terminal, run{" "}
             <span className="font-mono">npm run dev</span> from{" "}
             <span className="font-mono">policy-desk/</span>, or set{" "}
-            <span className="font-mono">VITE_LANGGRAPH_API_URL</span> to your deployment.
+            <span className="font-mono">POLICY_DESK_DEPLOYMENT_API</span> to your
+            deployment.
           </p>
         </div>
       </div>

@@ -36,11 +36,9 @@ runs:
           echo "::error::Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY"
           exit 1
         fi
-        # GitHub Actions: POLICY_DESK_DEPLOYMENT_API → Vite build-time URL.
-        # Local/manual: set VITE_LANGGRAPH_API_URL directly.
-        export VITE_LANGGRAPH_API_URL="${VITE_LANGGRAPH_API_URL:-$POLICY_DESK_DEPLOYMENT_API}"
-        if [ -z "$VITE_LANGGRAPH_API_URL" ]; then
-          echo "::error::Missing POLICY_DESK_DEPLOYMENT_API (or VITE_LANGGRAPH_API_URL) — LangSmith MDA deployment URL"
+        # Obtain from LangSmith after the first agent deploy (API / Resource URL).
+        if [ -z "$POLICY_DESK_DEPLOYMENT_API" ]; then
+          echo "::error::Missing POLICY_DESK_DEPLOYMENT_API — LangSmith MDA deployment URL from the first agent deploy"
           exit 1
         fi
         npm run build:ui

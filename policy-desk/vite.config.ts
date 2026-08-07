@@ -33,6 +33,8 @@ function createLangGraphViteProxy(): Record<string, ProxyOptions> {
 export default defineConfig(() => {
   return {
     base: process.env.DEPLOY_BASE || "/",
+    // Expose POLICY_DESK_DEPLOYMENT_API to the client (Vite defaults to VITE_* only).
+    envPrefix: ["VITE_", "POLICY_DESK_"],
     plugins: [tailwindcss(), react()],
     resolve: {
       alias: {

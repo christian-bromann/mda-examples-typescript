@@ -67,10 +67,12 @@ cp env.example .env
 | `MDA_GUEST_SIGNING_KEY` | agent | Random string (identity runtime) |
 | `VITE_SUPABASE_URL` | UI (build-time) | Publishable URL |
 | `VITE_SUPABASE_ANON_KEY` | UI (build-time) | Publishable / anon key |
-| `VITE_LANGGRAPH_API_URL` | UI (build-time) | Required for local Cloudflare deploy; leave unset for Vite proxy |
-| `POLICY_DESK_DEPLOYMENT_API` | GitHub Actions secret | LangSmith MDA URL — mapped to `VITE_LANGGRAPH_API_URL` in CI |
+| `POLICY_DESK_DEPLOYMENT_API` | UI (build-time) + Actions secret | LangSmith MDA API URL — required for Cloudflare / remote UI; leave unset for local Vite proxy |
 | `CLOUDFLARE_API_TOKEN` | wrangler | Workers deploy (`npm run deploy`) |
 | `CLOUDFLARE_ACCOUNT_ID` | wrangler | Cloudflare account ID |
+
+The UI must know where the hosted agent lives. That **API URL only exists after
+the first agent deploy** — see [Deploy](#deploy).
 
 ## Run locally
 
@@ -85,24 +87,47 @@ Starts the agent (`:2024`) and UI (`:4900`) together. Open
 - Drop expense guidelines and ask “Can I expense a standing desk?”
 - Attach a remote-work policy and ask “Summarize the main rules for hybrid staff”
 
-Leave `VITE_LANGGRAPH_API_URL` unset locally (Vite proxies to `:2024`).
+Leave `POLICY_DESK_DEPLOYMENT_API` unset locally (Vite proxies to `:2024`).
 
 ## Deploy
 
-Deploys the agent to LangSmith, then builds and deploys the UI to Cloudflare:
+Policy Desk ships in two parts: the **agent** (LangSmith) and the **UI**
+(Cloudflare). The UI build bakes in the agent’s API URL, and that URL only
+exists after the agent has been deployed once — so the first ship is two
+passes.
+
+### 1. Deploy the agent
 
 ```bash
-# Set VITE_LANGGRAPH_API_URL to the LangSmith deployment URL first
-# (or re-run after the first deploy once you have the URL)
+npm run deploy:agent
+```
+
+In LangSmith, open the deployment and copy its **API URL** (also labeled
+**Resource URL** — not the deployment dashboard link). It looks like:
+
+```text
+https://your-deployment.us.langsmith.app
+```
+
+### 2. Set `POLICY_DESK_DEPLOYMENT_API`
+
+Put that URL in `.env` for local UI deploys, and as the GitHub Actions repo
+secret of the same name for CI.
+
+### 3. Deploy the UI
+
+```bash
+npm run deploy:ui
+# or, once the URL is set, both steps together:
 npm run deploy
 ```
 
-Use `npm run deploy:agent` or `npm run deploy:ui` to run either step alone.
-
 Or use **Actions → Deploy agent → Run workflow** and pick `policy-desk`.
-That deploys the agent to LangSmith and the UI to Cloudflare (needs
-`CLOUDFLARE_*`, the `VITE_*` secrets above, and `POLICY_DESK_DEPLOYMENT_API`
-set to the LangSmith MDA URL after the first agent deploy).
+That deploys the agent to LangSmith and the UI to Cloudflare. After the first
+agent deploy, set `POLICY_DESK_DEPLOYMENT_API` (plus `CLOUDFLARE_*` and the
+`VITE_SUPABASE_*` secrets above) so the UI build can reach the hosted agent.
+On the very first Actions run, the UI step fails until that secret is set —
+re-run the workflow after copying the API URL from LangSmith.
 
 ## Security notes
 

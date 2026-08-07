@@ -37,7 +37,9 @@ See each example’s README for secrets, Slack/GitHub setup, and deploy steps.
 
 Use **Actions → Deploy agent → Run workflow** and pick an agent. The workflow
 runs `mda deploy` against LangSmith. When you pick `policy-desk`, it also
-builds and deploys the Vite UI to Cloudflare.
+builds and deploys the Vite UI to Cloudflare — after the first agent deploy,
+set `POLICY_DESK_DEPLOYMENT_API` to the LangSmith MDA API URL so the UI can
+reach the hosted agent (see [`policy-desk/README.md`](./policy-desk/README.md#deploy)).
 
 Configure these repository secrets first (Settings → Secrets and variables →
 Actions). Use `MDA_GITHUB_TOKEN` for your personal GitHub PAT — Actions already
@@ -57,6 +59,6 @@ owns the name `GITHUB_TOKEN`.
 | `LANGSMITH_WORKSPACE_ID`     | if your key is org-scoped                     |
 | `VITE_SUPABASE_URL`          | `policy-desk` identity + UI                   |
 | `VITE_SUPABASE_ANON_KEY`     | `policy-desk` UI                              |
-| `VITE_LANGGRAPH_API_URL`     | `policy-desk` UI (MDA deployment URL)         |
+| `POLICY_DESK_DEPLOYMENT_API` | `policy-desk` UI — LangSmith MDA API URL (set after the first agent deploy) |
 | `CLOUDFLARE_API_TOKEN`       | `policy-desk` UI                              |
 | `CLOUDFLARE_ACCOUNT_ID`      | `policy-desk` UI                              |
