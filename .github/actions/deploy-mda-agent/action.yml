@@ -81,4 +81,4 @@ runs:
         AGENT: ${{ inputs.agent }}
       run: |
         echo "Deploying '$AGENT' as prod"
-        npx mda deploy . --name "$AGENT" --deployment-type prod
+        npx mda deploy . --deployment-type prod

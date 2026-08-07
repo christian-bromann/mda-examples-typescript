@@ -13,7 +13,7 @@ import { searchXPosts } from "./tools/search-x-posts.js";
  * System prompt from `instructions.md`.
  */
 export const agent = defineDeepAgent({
-  name: "marketing-assistant",
+  name: "mda-example-marketing-assistant-ts",
   model: "openai:gpt-5.5",
   tools: [searchHackerNews, searchXPosts, getXUserTimeline],
 });

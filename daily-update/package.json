@@ -1,5 +1,5 @@
 {
-  "name": "daily-update",
+  "name": "mda-example-daily-update-ts",
   "version": "0.0.0",
   "private": true,
   "type": "module",

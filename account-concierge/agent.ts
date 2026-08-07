@@ -10,7 +10,7 @@ import { whoami } from "./tools/whoami.js";
  * concierge greets the member by account. `whoami` echoes the resolved identity.
  */
 export const agent = defineDeepAgent({
-  name: "account-concierge",
+  name: "mda-example-account-concierge-ts",
   model: "openai:gpt-5.5",
   tools: [whoami],
 });

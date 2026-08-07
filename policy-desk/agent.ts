@@ -13,7 +13,7 @@ import { stageChatUploadsMiddleware } from "./middleware/stage-chat-uploads.js";
  * System prompt: `instructions.md`. UI: `src/` (Vite + Supabase login).
  */
 export const agent = defineDeepAgent({
-  name: "policy-desk",
+  name: "mda-example-policy-desk-ts",
   model: "openai:gpt-5.5",
   middleware: [stageChatUploadsMiddleware()],
 });

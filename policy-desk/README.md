@@ -68,7 +68,7 @@ cp env.example .env
 | `VITE_SUPABASE_URL` | UI (build-time) | Publishable URL |
 | `VITE_SUPABASE_ANON_KEY` | UI (build-time) | Publishable / anon key |
 | `VITE_LANGGRAPH_API_URL` | UI (build-time) | Required for Cloudflare / remote UI |
-| `VITE_LANGGRAPH_ASSISTANT_ID` | UI (build-time) | Default `policy-desk` |
+| `VITE_LANGGRAPH_ASSISTANT_ID` | UI (build-time) | Default `mda-example-policy-desk-ts` |
 
 ## Run locally
 

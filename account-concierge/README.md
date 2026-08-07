@@ -85,7 +85,7 @@ curl -s -b cookies.txt -X POST \
   "http://127.0.0.1:4910/threads/${THREAD_ID}/runs/wait" \
   -H 'content-type: application/json' \
   -d '{
-    "assistant_id": "account-concierge",
+    "assistant_id": "mda-example-account-concierge-ts",
     "input": { "messages": [{ "role": "user", "content": "Hi — which account am I signed in as?" }] }
   }' | jq -r '.messages[-1].content'
 ```

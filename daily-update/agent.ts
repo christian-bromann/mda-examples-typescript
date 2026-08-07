@@ -18,7 +18,7 @@ import { searchSlackMessages } from "./tools/search-slack-messages.js";
  * `SLACK_USER_TOKEN`) from `.env` — not connectors.
  */
 export const agent = defineDeepAgent({
-  name: "daily-update",
+  name: "mda-example-daily-update-ts",
   model: "openai:gpt-5.5",
   tools: [
     getGithubUser,

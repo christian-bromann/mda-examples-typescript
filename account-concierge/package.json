@@ -1,5 +1,5 @@
 {
-  "name": "account-concierge",
+  "name": "mda-example-account-concierge-ts",
   "version": "0.0.0",
   "private": true,
   "type": "module",

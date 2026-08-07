@@ -69,7 +69,7 @@ cp env.example .env
 # fill secrets + set SLACK_USER_ID in schedules/morning-digest.ts
 
 npx mda dev .
-npx mda deploy . --name daily-update
+npx mda deploy .
 ```
 
 ## Manual test prompts
