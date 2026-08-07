@@ -50,7 +50,7 @@ export default defineConfig(() => {
           "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           // blob: required so PromptInput can fetch object URLs when converting attachments to data URLs
-          "connect-src 'self' blob: ws: wss: http://127.0.0.1:* http://localhost:* https://*.supabase.co https://*.langsmith.app https://*.smith.langchain.com",
+          "connect-src 'self' blob: ws: wss: http://127.0.0.1:* http://localhost:* https://*.supabase.co https://*.langgraph.app wss://*.langgraph.app https://*.langsmith.app https://*.smith.langchain.com",
           "img-src 'self' data: blob:",
           "font-src 'self' data: https://fonts.gstatic.com",
           "object-src 'none'",
