@@ -26,11 +26,7 @@ runs:
     - name: Install dependencies
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: |
-        # Local clones may pin managed-deepagents via file:; CI always uses npm.
-        npm pkg set 'dependencies.managed-deepagents=dev'
-        rm -f package-lock.json
-        npm install
+      run: npm ci
 
     - name: Build UI
       shell: bash
