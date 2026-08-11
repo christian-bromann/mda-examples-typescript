@@ -1,16 +1,11 @@
 import { auth, defineIdentity } from "managed-deepagents";
 
 /**
- * Resolve the Supabase project subdomain for JWKS verification.
- *
- * Prefer `SUPABASE_PROJECT_REF`, otherwise parse
- * `SUPABASE_URL` / `VITE_SUPABASE_URL` (`https://<ref>.supabase.co`).
+ * Resolve the Supabase project subdomain for JWKS verification from
+ * `VITE_SUPABASE_URL` (`https://<ref>.supabase.co`).
  */
 function supabaseProjectRef(): string {
-  const explicit = process.env.SUPABASE_PROJECT_REF?.trim();
-  if (explicit) return explicit;
-
-  const url = (process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL)?.trim();
+  const url = process.env.VITE_SUPABASE_URL?.trim();
   if (url) {
     try {
       const host = new URL(url).hostname;
@@ -22,8 +17,8 @@ function supabaseProjectRef(): string {
   }
 
   throw new Error(
-    "Set SUPABASE_PROJECT_REF or SUPABASE_URL (or VITE_SUPABASE_URL) so " +
-      "identity.ts can resolve auth.supabase({ projectRef })."
+    "Set VITE_SUPABASE_URL so identity.ts can resolve " +
+      "auth.supabase({ projectRef })."
   );
 }
 

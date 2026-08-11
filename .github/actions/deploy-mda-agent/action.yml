@@ -64,8 +64,6 @@ runs:
         write_env GITHUB_TOKEN "$MDA_GITHUB_TOKEN"
         write_env X_BEARER_TOKEN "$X_BEARER_TOKEN"
         write_env MDA_GUEST_SIGNING_KEY "$MDA_GUEST_SIGNING_KEY"
-        write_env SUPABASE_PROJECT_REF "$SUPABASE_PROJECT_REF"
-        write_env SUPABASE_URL "$SUPABASE_URL"
         write_env VITE_SUPABASE_URL "$VITE_SUPABASE_URL"
 
         echo "Wrote .env with $(grep -c '=' .env) keys (values redacted)."

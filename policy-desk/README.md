@@ -51,8 +51,7 @@ policy-desk/
 ## Configure
 
 1. Create a Supabase project. Enable **Email** auth.
-2. Copy env and fill secrets. `identity.ts` reads the project ref from
-   `SUPABASE_PROJECT_REF`, or parses it from `SUPABASE_URL` /
+2. Copy env and fill secrets. `identity.ts` parses the project ref from
    `VITE_SUPABASE_URL` (`https://<project-ref>.supabase.co`).
 
 ```bash
@@ -65,7 +64,7 @@ cp env.example .env
 | `LANGSMITH_API_KEY` | agent | Deploy + sandboxes |
 | `OPENAI_API_KEY` | agent | Model |
 | `MDA_GUEST_SIGNING_KEY` | agent | Random string (identity runtime) |
-| `VITE_SUPABASE_URL` | UI (build-time) | Publishable URL |
+| `VITE_SUPABASE_URL` | UI + agent | Publishable URL; agent parses project ref from host |
 | `VITE_SUPABASE_ANON_KEY` | UI (build-time) | Publishable / anon key |
 | `POLICY_DESK_DEPLOYMENT_API` | UI (build-time) + Actions secret | LangSmith MDA API URL — required for Cloudflare / remote UI; leave unset for local Vite proxy |
 | `CLOUDFLARE_API_TOKEN` | wrangler | Workers deploy (`npm run deploy`) |
