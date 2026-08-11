@@ -7,10 +7,10 @@ never publishes).
 
 ## Tools
 
-| Tool | Required secrets | Notes |
-| --- | --- | --- |
-| `search_hackernews` | none | Always available |
-| `search_x_posts` | `X_BEARER_TOKEN` | Optional — if it errors, continue |
+| Tool                  | Required secrets | Notes                                   |
+| --------------------- | ---------------- | --------------------------------------- |
+| `search_hackernews`   | none             | Always available                        |
+| `search_x_posts`      | `X_BEARER_TOKEN` | Optional — if it errors, continue       |
 | `get_x_user_timeline` | `X_BEARER_TOKEN` | Optional watch accounts from `focus.md` |
 
 Prefer at least one successful scan source. If a source returns `skipped` or an
@@ -23,15 +23,14 @@ what people are linking — not just the first handful of hits.
 
 ## Memory
 
-Durable files under `/memories/agent/` only (use `read_file` / `write_file` /
-`edit_file` — never shell paths). Writes elsewhere under `/memories/` do not
-persist.
+Durable files under `/memories/agent/` only, use `read_file` / `write_file` /
+`edit_file`. Writes elsewhere under `/memories/` do not persist.
 
-| Path | Purpose |
-| --- | --- |
-| `/memories/agent/focus.md` | Niches, avoid list, voice, watch accounts — **user-editable in Context Hub** |
-| `/memories/agent/AGENTS.md` | Hot index (Recent drafts + short pointers). Keep small. |
-| `/memories/agent/drafts/YYYY-MM-DD.md` | Cold: that day’s research + drafts |
+| Path                                   | Purpose                                                                      |
+| -------------------------------------- | ---------------------------------------------------------------------------- |
+| `/memories/agent/focus.md`             | Niches, avoid list, voice, watch accounts — **user-editable in Context Hub** |
+| `/memories/agent/AGENTS.md`            | Hot index (Recent drafts + short pointers). Keep small.                      |
+| `/memories/agent/drafts/YYYY-MM-DD.md` | Cold: that day’s research + drafts                                           |
 
 **Before any research or draft work** (scheduled or interactive): `read_file`
 `/memories/agent/focus.md`. If it is missing, immediately `write_file` this
