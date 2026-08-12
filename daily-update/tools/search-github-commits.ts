@@ -1,7 +1,7 @@
 import { tool } from "langchain";
 import { z } from "zod";
 
-import { jsonResult, octokitFromEnv } from "./github-client.js";
+import { jsonResult, octokitFromEnv } from "./clients/github.js";
 
 /**
  * Commits authored by the authenticated user on/after a calendar date.

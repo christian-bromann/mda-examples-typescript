@@ -11,6 +11,7 @@
 #   SLACK_SIGNING_SECRET
 #   SLACK_USER_TOKEN
 #   MDA_GITHUB_TOKEN
+#   LINEAR_API_KEY              # daily-update Linear tools
 #
 # Optional repository secrets:
 #   LANGSMITH_WORKSPACE_ID    # org-scoped keys / multi-workspace
@@ -72,6 +73,7 @@ jobs:
           SLACK_SIGNING_SECRET: ${{ secrets.SLACK_SIGNING_SECRET }}
           SLACK_USER_TOKEN: ${{ secrets.SLACK_USER_TOKEN }}
           MDA_GITHUB_TOKEN: ${{ secrets.MDA_GITHUB_TOKEN }}
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
           X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
           MDA_GUEST_SIGNING_KEY: ${{ secrets.MDA_GUEST_SIGNING_KEY }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}

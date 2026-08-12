@@ -7,15 +7,17 @@ Weekdays at **7:00am America/Los_Angeles**, this Managed Deep Agent:
 3. Pulls your GitHub activity for the window via authored tools (`GITHUB_TOKEN`) —
    previous 24 hours, except **Monday, which looks back 72 hours** so Friday,
    Saturday and Sunday arrive as one consolidated weekend catch-up
-4. Groups by evolving workstreams and writes `/memories/agent/daily/YYYY-MM-DD.md`
-5. DMs you a standup-ready summary on Slack (`deliverTo.autoPost`)
+4. Pulls your Linear activity for the same window via authored tools
+   (`LINEAR_API_KEY`) — issues you own/created plus your comments
+5. Groups by evolving workstreams and writes `/memories/agent/daily/YYYY-MM-DD.md`
+6. DMs you a standup-ready summary on Slack (`deliverTo.autoPost`)
 
 Saturday and Sunday are **not** scheduled. You can still DM the bot later
 (“what did I ship last week?”) and it will read those daily markdown files.
 
-This example shows how to reach GitHub and Slack **without connectors**: tokens
-live in `.env`, and the agent calls them through custom LangChain tools under
-`tools/`.
+This example shows how to reach GitHub, Linear, and Slack **without connectors**:
+tokens live in `.env`, and the agent calls them through custom LangChain tools
+under `tools/`.
 
 ## Layout
 
@@ -25,16 +27,17 @@ daily-update/
   identity.ts                   # trusted-backend ingress
   memory.ts                     # defineMemory({ scope: "agent" }) — required for Context Hub
   instructions.md
-  tools/                        # GitHub + Slack Web API tools
+  tools/                        # GitHub + Linear + Slack Web API tools
   channels/slack.ts             # DMs / mentions (bot token)
   schedules/morning-digest.ts   # 0 7 * * 1-5 PT → Slack DM
+  schedules/morning-digest.md   # cron prompt (imported as text)
   docs/slack-user-token.md      # how to mint SLACK_USER_TOKEN
   env.example
 ```
 
 ## What this demonstrates
 
-- **Custom tools** — Octokit + Slack Web API with deployment secrets
+- **Custom tools** — Octokit + Linear GraphQL + Slack Web API with deployment secrets
 - **Schedules** — weekday cron with Slack DM delivery
 - **Channels** — Slack Events for interactive follow-ups
 - **Memory** — durable digests under `/memories/agent/daily/`
@@ -56,6 +59,11 @@ daily-update/
    `SLACK_USER_TOKEN`.
 5. GitHub PAT: classic with `repo` (+ org SSO) so private and public activity
    both show up.
+6. Linear personal API key: create under
+   [Security & access](https://linear.app/settings/account/security) and set
+   `LINEAR_API_KEY`. The key acts as your user (assigned/created issues + your
+   comments). Linear is optional at runtime — if the key is missing, the digest
+   still runs on GitHub + Slack.
 
 Do **not** set `SLACK_CLIENT_ID` / `SLACK_CLIENT_SECRET` unless you intentionally
 want Connect-with-Slack. Without that OAuth path, DMs invoke the agent directly.

@@ -5,17 +5,20 @@ import { listGithubEvents } from "./tools/list-github-events.js";
 import { searchGithubCommits } from "./tools/search-github-commits.js";
 import { searchGithubIssues } from "./tools/search-github-issues.js";
 import { searchGithubPullRequests } from "./tools/search-github-pull-requests.js";
+import { getLinearUser } from "./tools/get-linear-user.js";
+import { searchLinearComments } from "./tools/search-linear-comments.js";
+import { searchLinearIssues } from "./tools/search-linear-issues.js";
 import { getSlackThread } from "./tools/get-slack-thread.js";
 import { searchSlackMessages } from "./tools/search-slack-messages.js";
 
 /**
- * Daily update agent — GitHub + Slack activity digest via authored tools,
- * Slack DM delivery from `schedules/morning-digest.ts`, and durable notes under
- * `/memories/agent/daily/`. System prompt from `instructions.md`.
+ * Daily update agent — GitHub + Linear + Slack activity digest via authored
+ * tools, Slack DM delivery from `schedules/morning-digest.ts`, and durable
+ * notes under `/memories/agent/daily/`. System prompt from `instructions.md`.
  *
  * Durable memory requires root `memory.ts` (`defineMemory({ scope: "agent" })`).
- * GitHub and Slack access use deployment secrets (`GITHUB_TOKEN`,
- * `SLACK_USER_TOKEN`) from `.env` — not connectors.
+ * GitHub, Linear, and Slack access use deployment secrets (`GITHUB_TOKEN`,
+ * `LINEAR_API_KEY`, `SLACK_USER_TOKEN`) from `.env` — not connectors.
  */
 export const agent = defineDeepAgent({
   name: "mda-example-daily-update-ts",
@@ -26,6 +29,9 @@ export const agent = defineDeepAgent({
     searchGithubPullRequests,
     searchGithubIssues,
     searchGithubCommits,
+    getLinearUser,
+    searchLinearIssues,
+    searchLinearComments,
     searchSlackMessages,
     getSlackThread,
   ],

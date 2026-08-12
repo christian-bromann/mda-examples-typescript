@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Weekday GitHub + Slack activity digest → Slack DM + durable memory.",
+  "description": "Weekday GitHub + Linear + Slack activity digest → Slack DM + durable memory.",
   "scripts": {
     "dev": "mda dev .",
     "deploy": "mda deploy .",
@@ -14,7 +14,7 @@
     "@octokit/rest": "^22.0.1",
     "@slack/web-api": "^7.13.0",
     "langchain": "1.5.4",
-    "managed-deepagents": "0.5.0",
+    "managed-deepagents": "0.5.3-dev.111",
     "zod": "^4.4.3"
   },
   "devDependencies": {
