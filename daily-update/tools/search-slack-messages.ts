@@ -1,7 +1,7 @@
 import { tool } from "langchain";
 import { z } from "zod";
 
-import { jsonResult, slackClientFromEnv } from "./slack-client.js";
+import { jsonResult, slackClientFromEnv, slackError } from "./clients/slack.js";
 
 /**
  * Search Slack messages visible to the user token for digest framing.
@@ -18,12 +18,17 @@ export const searchSlackMessages = tool(
     if (after !== undefined) {
       parts.push(`after:${after}`);
     }
-    const result = await client.search.messages({
-      query: parts.filter(Boolean).join(" "),
-      count: Math.min(count ?? 20, 50),
-      sort: "timestamp",
-      sort_dir: "desc",
-    });
+    let result;
+    try {
+      result = await client.search.messages({
+        query: parts.filter(Boolean).join(" "),
+        count: Math.min(count ?? 20, 50),
+        sort: "timestamp",
+        sort_dir: "desc",
+      });
+    } catch (err) {
+      return slackError(err);
+    }
 
     if (!result.ok) {
       return jsonResult({

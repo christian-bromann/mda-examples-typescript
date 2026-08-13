@@ -1,7 +1,7 @@
 import { tool } from "langchain";
 import { z } from "zod";
 
-import { jsonResult, slackClientFromEnv } from "./slack-client.js";
+import { jsonResult, slackClientFromEnv, slackError } from "./clients/slack.js";
 
 /** Read a Slack channel or thread when a search hit needs more context. */
 export const getSlackThread = tool(
@@ -12,11 +12,16 @@ export const getSlackThread = tool(
     }
 
     if (threadTs) {
-      const result = await client.conversations.replies({
-        channel: channelId,
-        ts: threadTs,
-        limit: Math.min(limit ?? 30, 50),
-      });
+      let result;
+      try {
+        result = await client.conversations.replies({
+          channel: channelId,
+          ts: threadTs,
+          limit: Math.min(limit ?? 30, 50),
+        });
+      } catch (err) {
+        return slackError(err);
+      }
       if (!result.ok) {
         return jsonResult({
           error: result.error ?? "Slack conversations.replies failed",
@@ -31,10 +36,15 @@ export const getSlackThread = tool(
       );
     }
 
-    const result = await client.conversations.history({
-      channel: channelId,
-      limit: Math.min(limit ?? 30, 50),
-    });
+    let result;
+    try {
+      result = await client.conversations.history({
+        channel: channelId,
+        limit: Math.min(limit ?? 30, 50),
+      });
+    } catch (err) {
+      return slackError(err);
+    }
     if (!result.ok) {
       return jsonResult({
         error: result.error ?? "Slack conversations.history failed",
