@@ -1,0 +1,3 @@
+# Keep the analytics image lean; nothing from the agent project is copied in.
+*
+!Dockerfile
