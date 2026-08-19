@@ -232,6 +232,12 @@ function ChatSession() {
     [stream]
   );
 
+  const handleStop = useCallback(() => {
+    void stream.stop().catch((error) => {
+      console.warn("[data-analyst] failed to cancel run:", error);
+    });
+  }, [stream]);
+
   const handleNewChat = useCallback(() => {
     onThreadId(undefined);
     setInputText("");
@@ -306,8 +312,11 @@ function ChatSession() {
                   <AttachFileButton />
                   <PromptInputSubmit
                     status={chatStatus}
+                    onStop={handleStop}
                     disabled={
-                      !inputText.trim() && attachedNames.length === 0 && !stream.isLoading
+                      !inputText.trim() &&
+                      attachedNames.length === 0 &&
+                      !stream.isLoading
                     }
                   />
                 </PromptInputTools>

@@ -135,6 +135,12 @@ function ChatSession() {
     [stream, targetRepo]
   );
 
+  const handleStop = useCallback(() => {
+    void stream.stop().catch((error) => {
+      console.warn("[repo-pulse] failed to cancel run:", error);
+    });
+  }, [stream]);
+
   const handleNewChat = useCallback(() => {
     onThreadId(undefined);
     setInputText("");
@@ -214,8 +220,9 @@ function ChatSession() {
                 <PromptInputTools className="ml-auto gap-1.5">
                   <PromptInputSubmit
                     status={chatStatus}
+                    onStop={handleStop}
                     disabled={
-                      (!inputText.trim() && !targetRepo) || stream.isLoading
+                      !stream.isLoading && !inputText.trim() && !targetRepo
                     }
                   />
                 </PromptInputTools>

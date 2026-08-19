@@ -38,8 +38,8 @@ export function EmptyState({
           <h1 className="text-xl font-semibold">Repo Pulse</h1>
           <p className="text-sm text-muted-foreground">
             Pick a GitHub repository and ask about contributors, review latency,
-            or throughput. Charts run in a sandbox that already has pandas and
-            matplotlib.
+            or throughput. The sandbox already has the{" "}
+            <code className="text-xs">gh</code> CLI, pandas, and matplotlib.
           </p>
         </div>
       </div>

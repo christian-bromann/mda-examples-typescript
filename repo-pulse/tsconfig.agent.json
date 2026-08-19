@@ -16,7 +16,6 @@
     "identity.ts",
     "middleware/**/*.ts",
     "sandbox/**/*.ts",
-    "tools/**/*.ts",
     "vite.config.ts"
   ]
 }
