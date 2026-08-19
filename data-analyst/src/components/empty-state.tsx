@@ -1,7 +1,6 @@
 "use client";
 
-import { ChartColumnIcon } from "lucide-react";
-
+import { DeepAgentsMark } from "src/components/brand";
 import { SampleDatasetCard } from "src/components/sample-dataset-card";
 import { Suggestion, Suggestions } from "src/components/ui/suggestion";
 
@@ -31,12 +30,10 @@ export function EmptyState({
   return (
     <div className="flex flex-1 flex-col items-center justify-end overflow-x-hidden px-4 pb-2 pt-8 text-center sm:px-8">
       <div className="mb-auto flex flex-col items-center gap-4 pt-10">
-        <div className="flex size-12 items-center justify-center rounded-2xl border bg-muted">
-          <ChartColumnIcon className="size-6 text-primary" />
-        </div>
+        <DeepAgentsMark />
         <div className="w-full max-w-md space-y-2 px-1">
-          <h1 className="text-xl font-semibold">Data Analyst</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-3xl font-light tracking-tight">Data Analyst</h1>
+          <p className="text-sm leading-relaxed text-muted-foreground">
             Drop a CSV and ask a business question. Analysis runs in a sandbox
             that already has pandas, DuckDB, and matplotlib.
           </p>
@@ -45,7 +42,7 @@ export function EmptyState({
 
       {!sampleAttached ? (
         <div className="flex flex-col items-center gap-2">
-          <p className="max-w-xs text-sm text-muted-foreground">
+          <p className="max-w-xs font-mono text-sm tracking-tight text-muted-foreground">
             Drag this file into the box below — or drop your own CSV
           </p>
           <SampleDatasetCard onAttach={onAttachSample} attached={sampleAttached} />
@@ -82,7 +79,7 @@ export function EmptyState({
         </div>
       ) : (
         <div className="mb-4 flex w-full max-w-lg flex-col items-center gap-3 px-1">
-          <p className="text-sm text-muted-foreground">
+          <p className="font-mono text-sm tracking-tight text-muted-foreground">
             Sample attached — try one of these, or write your own
           </p>
           <Suggestions className="justify-center">

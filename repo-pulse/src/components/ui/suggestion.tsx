@@ -39,7 +39,7 @@ export const Suggestion = ({
       variant={variant}
       size={size}
       onClick={handleClick}
-      className={cn("rounded-full px-4", className)}
+      className={cn("rounded-full px-4 font-mono text-xs tracking-tight", className)}
       {...props}
     >
       {children ?? suggestion}

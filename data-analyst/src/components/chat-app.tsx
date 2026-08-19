@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartColumnIcon, FileTextIcon, PaperclipIcon, PlusIcon, XIcon } from "lucide-react";
+import { FileTextIcon, PaperclipIcon, PlusIcon, XIcon } from "lucide-react";
 import {
   useCallback,
   useEffect,
@@ -29,6 +29,7 @@ import {
   type AttachmentsContext,
   type PromptInputMessage,
 } from "src/components/ai-elements/prompt-input";
+import { AppHeader, AppShell } from "src/components/brand";
 import { Button } from "src/components/ui/button";
 import { ChatThread } from "src/components/chat-thread";
 import { EmptyState } from "src/components/empty-state";
@@ -253,24 +254,23 @@ function ChatSession() {
 
   return (
     <>
-      <header className="flex shrink-0 items-center justify-between gap-2 border-b px-3 py-2.5 sm:px-4">
-        <div className="flex min-w-0 items-center gap-2">
-          <ChartColumnIcon className="size-4 shrink-0 text-primary" />
-          <span className="truncate text-sm font-semibold">Data Analyst</span>
-        </div>
-        {hasMessages && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleNewChat}
-            className="shrink-0 gap-1.5 px-2 sm:px-3"
-            title="New chat"
-          >
-            <PlusIcon className="size-4" />
-            <span className="hidden sm:inline">New chat</span>
-          </Button>
-        )}
-      </header>
+      <AppHeader
+        title="Data Analyst"
+        actions={
+          hasMessages ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleNewChat}
+              className="shrink-0 gap-1.5 px-2 font-mono text-xs tracking-tight sm:px-3"
+              title="New Chat"
+            >
+              <PlusIcon className="size-4" />
+              <span className="hidden sm:inline">New Chat</span>
+            </Button>
+          ) : null
+        }
+      />
 
       <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {hasMessages ? (
@@ -293,7 +293,7 @@ function ChatSession() {
               maxFileSize={MAX_UPLOAD_BYTES}
               onSubmit={handleSubmit}
               onError={handleAttachmentError}
-              className="w-full rounded-xl has-[[data-slot=input-group-control]:focus-visible]:ring-0"
+              className="w-full rounded-xl has-[[data-slot=input-group-control]:focus-visible]:ring-0 [&_[data-slot=input-group]]:bg-card"
             >
               <AttachmentChipsHeader />
               <PromptInputBody>
@@ -372,35 +372,33 @@ interface ChatAppProps {
 export function ChatApp({ backendStatus, apiUrl }: ChatAppProps) {
   if (backendStatus === "offline") {
     return (
-      <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
-        <header className="flex shrink-0 items-center gap-2 border-b px-3 py-2.5 sm:px-4">
-          <ChartColumnIcon className="size-4 shrink-0 text-primary" />
-          <span className="truncate text-sm font-semibold">Data Analyst</span>
-        </header>
+      <AppShell>
+        <AppHeader title="Data Analyst" />
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-          <p className="text-sm font-medium">Agent offline</p>
-          <p className="max-w-md text-sm text-muted-foreground">
-            Cannot reach <span className="font-mono break-all">{apiUrl}</span>. Run{" "}
-            <span className="font-mono">npm run dev</span> from{" "}
-            <span className="font-mono">data-analyst/</span> so the agent and UI
-            start together.
+          <p className="text-sm font-light">Agent offline</p>
+          <p className="max-w-md font-mono text-sm tracking-tight text-muted-foreground">
+            Cannot reach <span className="break-all">{apiUrl}</span>. Run{" "}
+            <span>npm run dev</span> from <span>data-analyst/</span> so the agent
+            and UI start together.
           </p>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
   if (backendStatus === "checking") {
     return (
-      <div className="flex h-dvh items-center justify-center bg-background text-sm text-muted-foreground">
-        Connecting to agent…
-      </div>
+      <AppShell>
+        <div className="flex flex-1 items-center justify-center font-mono text-sm tracking-tight text-muted-foreground">
+          Connecting to agent…
+        </div>
+      </AppShell>
     );
   }
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
+    <AppShell>
       <ChatSession />
-    </div>
+    </AppShell>
   );
 }

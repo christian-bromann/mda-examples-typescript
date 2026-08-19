@@ -112,8 +112,8 @@ export function SampleDatasetCard({ onAttach, attached }: SampleDatasetCardProps
       disabled={file === null}
       title="Drag into the composer, or click to attach"
       className={cn(
-        "group flex flex-col items-center gap-1.5 rounded-xl border border-dashed bg-muted/40 px-4 py-3",
-        "cursor-grab transition-colors hover:border-primary/60 hover:bg-muted active:cursor-grabbing",
+        "group flex flex-col items-center gap-1.5 rounded-xl border border-dashed bg-card px-4 py-3",
+        "cursor-grab transition-colors hover:border-primary hover:bg-secondary active:cursor-grabbing",
         "disabled:cursor-default disabled:opacity-60",
         dragging && "border-primary/60 opacity-60"
       )}

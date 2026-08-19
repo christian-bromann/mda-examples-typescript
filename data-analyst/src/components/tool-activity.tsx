@@ -34,25 +34,25 @@ function meta(name: string): { label: string; Icon: LucideIcon } {
     case "execute":
     case "shell":
     case "run":
-      return { label: "Ran a sandbox command", Icon: TerminalIcon };
+      return { label: "Run", Icon: TerminalIcon };
     case "ls":
     case "list_files":
     case "list_directory":
-      return { label: "Listed project files", Icon: FolderSearchIcon };
+      return { label: "List", Icon: FolderSearchIcon };
     case "glob":
     case "grep":
     case "search":
-      return { label: "Searched the project", Icon: FolderSearchIcon };
+      return { label: "Search", Icon: FolderSearchIcon };
     case "read_file":
     case "read":
-      return { label: "Read a file", Icon: FileTextIcon };
+      return { label: "Read", Icon: FileTextIcon };
     case "write_file":
     case "write":
-      return { label: "Wrote a file", Icon: FilePlusIcon };
+      return { label: "Write", Icon: FilePlusIcon };
     case "edit_file":
     case "edit":
     case "str_replace":
-      return { label: "Edited a file", Icon: FilePenIcon };
+      return { label: "Edit", Icon: FilePenIcon };
     default:
       return { label: name, Icon: WrenchIcon };
   }

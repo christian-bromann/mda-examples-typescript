@@ -54,8 +54,8 @@ export function TargetRepoCard({ selected, onSelect }: TargetRepoCardProps) {
         onClick={handleUseDefault}
         title="Use this repository"
         className={cn(
-          "group flex w-full flex-col items-center gap-1.5 rounded-xl border border-dashed bg-muted/40 px-4 py-3",
-          "cursor-pointer transition-colors hover:border-primary/60 hover:bg-muted"
+          "group flex w-full flex-col items-center gap-1.5 rounded-xl border border-dashed bg-card px-4 py-3",
+          "cursor-pointer transition-colors hover:border-primary hover:bg-secondary"
         )}
       >
         <GitBranchIcon className="size-7 text-primary" />

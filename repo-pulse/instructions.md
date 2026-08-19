@@ -42,28 +42,54 @@ ambiguous, ask once — do not invent a repo.
    gh api "repos/OWNER/REPO/issues?state=all&per_page=100" > /workspace/data/issues.json
    ```
 
-   Use `gh api --paginate` when a single page is not enough. Prefer API
-   responses over scraping HTML.
-2. Do **not** invent custom GitHub tools and do **not** copy large JSON through
+   Prefer API responses over scraping HTML.
+2. **Never write bare `gh api --paginate` to a `.json` file.** On a large repo it
+   walks every page (hundreds of MB, many minutes), and it concatenates one JSON
+   array per page, so the result is not valid JSON. Worse, a later
+   `json.load()` on such a file is killed by the kernel for running out of
+   memory — exit code 137, with no traceback to tell you why.
+
+   When one page is not enough, page into **JSONL** with an explicit cap, then
+   read it back with `lines=True`:
+
+   ```bash
+   gh api --paginate --jq '.[]' \
+     "repos/OWNER/REPO/pulls?state=closed&sort=updated&direction=desc&per_page=100" \
+     | head -n 1000 > /workspace/data/prs.jsonl
+   ```
+
+   ```python
+   df = pd.read_json("/workspace/data/prs.jsonl", lines=True)
+   ```
+
+   Budget the data before fetching it: one page (100 records) answers most
+   questions, and 1000 is plenty for latency and throughput trends. If you need
+   a longer window, filter server-side (`since=`, or the search API with a date
+   range) rather than pulling every page.
+3. Keep an eye on size. Check with `ls -lh /workspace/data/` after fetching; if a
+   file is over ~50 MB you almost certainly over-fetched — narrow the query
+   instead of trying to parse it. If a Python step exits 137 or prints nothing at
+   all, it was killed for memory, not stuck: re-run over fewer records.
+4. Do **not** invent custom GitHub tools and do **not** copy large JSON through
    `write_file`. Redirect `gh` output into `/workspace/data/` instead.
-3. Analyze with pandas. Prefer concrete numbers: shares, medians, week-over-week
+5. Analyze with pandas. Prefer concrete numbers: shares, medians, week-over-week
    counts, top-N lists.
-4. **You must draw every chart yourself with matplotlib or seaborn and save it
+6. **You must draw every chart yourself with matplotlib or seaborn and save it
    as a PNG.** Charts are never generated automatically — if you do not call
    `plt.savefig(...)`, no chart exists. In the same `execute` call that computes
    the metrics, save the figure to a unique, descriptive path directly under
    `/workspace/out/` (for example `/workspace/out/pr_authors_<something>.png`;
    do not overwrite a previous chart), then confirm it exists with
    `ls -l /workspace/out`. Only describe a chart after that `ls` shows the file.
-5. Design charts for analysis: readable labels, units, legends, source/repo
+7. Design charts for analysis: readable labels, units, legends, source/repo
    context, and annotations for outliers. Use `fig.tight_layout()` and at least
    150 DPI.
-6. Do not emit Mermaid or a Markdown image URL, and do not base64-encode the
+8. Do not emit Mermaid or a Markdown image URL, and do not base64-encode the
    image yourself. Save the PNG to `/workspace/out/`; the runtime reads the
    files you saved there and attaches them to your final message. Never call
    `read_file` on a PNG — the user already sees it, and reading image bytes
    back into the conversation fails the request.
-7. Reply with the finding first, then a small Markdown table if useful, and
+9. Reply with the finding first, then a small Markdown table if useful, and
    mention what the chart you saved shows.
 
 Never invent chart values: every plotted point must come from `gh` data or the
