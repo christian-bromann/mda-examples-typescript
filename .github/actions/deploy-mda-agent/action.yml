@@ -62,6 +62,7 @@ runs:
         write_env SLACK_USER_TOKEN "$SLACK_USER_TOKEN"
         # Agent tools expect GITHUB_TOKEN; Actions reserves that name for its own token.
         write_env GITHUB_TOKEN "$MDA_GITHUB_TOKEN"
+        write_env DOCKERHUB_TOKEN "$DOCKERHUB_TOKEN"
         write_env LINEAR_API_KEY "$LINEAR_API_KEY"
         write_env X_BEARER_TOKEN "$X_BEARER_TOKEN"
         write_env MDA_GUEST_SIGNING_KEY "$MDA_GUEST_SIGNING_KEY"

@@ -1,21 +1,21 @@
 /**
- * Stage chat file attachments into the per-thread LangSmith sandbox.
+ * Stage chat dataset attachments into the per-thread LangSmith sandbox.
  *
- * There is no separate upload HTTP endpoint. The browser attaches a file in the
- * chat UI (`src/components/chat-app.tsx`), encodes it as base64, and submits a
- * multimodal human message via `useStream` / LangGraph, e.g.:
+ * There is no separate upload HTTP endpoint. The browser attaches (or drags) a
+ * CSV in the chat UI (`src/components/chat-app.tsx`), encodes it as base64, and
+ * submits a multimodal human message via `useStream` / LangGraph, e.g.:
  *
  * ```ts
  * {
  *   type: "human",
  *   content: [
- *     { type: "text", text: "Summarize this file" },
+ *     { type: "text", text: "Revenue by country?" },
  *     {
  *       type: "file",
- *       mime_type: "text/plain",
+ *       mime_type: "text/csv",
  *       source_type: "base64",
  *       data: "<base64…>",
- *       metadata: { filename: "notes.txt" },
+ *       metadata: { filename: "online_retail_sample.csv" },
  *     },
  *   ],
  * }
@@ -24,12 +24,10 @@
  * This middleware runs before the model sees that message:
  *
  * 1. **`wrapModelCall`** — find allowed `file` blocks on the latest human
- *    message, invoke harness `write_file` to `/workspace/uploads/<safe-name>`.
- *    - **Text files** (`.txt`, `.md`, `.py`, …): decode base64 → UTF-8 and pass
- *      plain text (sandbox `write` treats text MIME as UTF-8).
- *    - **PDFs**: pass base64 as-is (sandbox `write` decodes base64 for
- *      `application/pdf`).
- * 2. Replace heavy file blocks with a short text note listing sandbox paths.
+ *    message, decode base64 → UTF-8, and invoke harness `write_file` to
+ *    `/workspace/uploads/<safe-name>`.
+ * 2. Replace heavy file blocks with a short text note listing sandbox paths, so
+ *    a multi-megabyte CSV never enters model context.
  * 3. **`afterModel`** — persist the rewritten human message into graph state
  *    (`additional_kwargs.mda_staged_uploads` holds the staged paths).
  *
@@ -37,8 +35,9 @@
  * across model calls in one turn; `mda_staged_uploads` skips once state is
  * rewritten.
  *
- * After staging, `instructions.md` tells the agent how to read each kind of
- * file (direct `read_file` for text; `pypdf` extract for PDFs).
+ * Only text formats are accepted — binary workbooks would need a base64-aware
+ * sandbox write path. `instructions.md` tells the agent to analyze staged files
+ * with pandas / DuckDB rather than reading them into context.
  *
  * Wire this in `agent.ts` via `middleware: [stageChatUploadsMiddleware()]`.
  */
@@ -61,99 +60,45 @@ const pendingRewrites = new Map<string, HumanMessage>();
 
 /**
  * Extensions we stage. Keep in sync with the chat UI `accept` list.
- * Unknown extensions default to rejected unless MIME is clearly text/* or PDF.
+ * Unknown extensions default to rejected unless MIME is clearly text/*.
  */
 const TEXT_EXTENSIONS = new Set([
+  ".csv",
+  ".tsv",
   ".txt",
   ".md",
   ".markdown",
-  ".csv",
-  ".tsv",
   ".json",
   ".jsonl",
-  ".xml",
-  ".yaml",
-  ".yml",
-  ".toml",
-  ".ini",
-  ".cfg",
-  ".conf",
   ".log",
-  ".py",
-  ".ts",
-  ".tsx",
-  ".js",
-  ".jsx",
-  ".mjs",
-  ".cjs",
-  ".css",
-  ".html",
-  ".htm",
-  ".sql",
-  ".sh",
-  ".bash",
-  ".zsh",
-  ".rs",
-  ".go",
-  ".java",
-  ".rb",
-  ".php",
-  ".env",
 ]);
 
 type ContentBlock = Record<string, unknown>;
 
-type UploadKind = "text" | "pdf";
-
 interface StagedUpload {
   fileName: string;
-  /** Payload for `write_file`: UTF-8 text or base64 PDF bytes. */
+  /** UTF-8 payload for `write_file`. */
   writeContent: string;
   path: string;
-  kind: UploadKind;
 }
 
 function isRecord(value: unknown): value is ContentBlock {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function isPdfMime(mime: string | undefined): boolean {
-  if (!mime) return false;
-  const normalized = mime.toLowerCase();
-  return normalized === "application/pdf" || normalized.endsWith("/pdf");
-}
-
 function isTextMime(mime: string | undefined): boolean {
   if (!mime) return false;
   const normalized = mime.toLowerCase();
-  return (
-    normalized.startsWith("text/") ||
-    normalized === "application/json" ||
-    normalized === "application/javascript" ||
-    normalized === "application/xml" ||
-    normalized === "application/x-yaml" ||
-    normalized === "application/toml"
-  );
+  return normalized.startsWith("text/") || normalized === "application/json";
 }
 
-function classifyUpload(
-  mime: string | undefined,
-  fileName: string | undefined
-): UploadKind | null {
-  const ext = extname(fileName ?? "").toLowerCase();
-  if (isPdfMime(mime) || ext === ".pdf") return "pdf";
-  if (isTextMime(mime) || TEXT_EXTENSIONS.has(ext)) return "text";
-  return null;
+function isStageable(mime: string | undefined, fileName: string | undefined): boolean {
+  return isTextMime(mime) || TEXT_EXTENSIONS.has(extname(fileName ?? "").toLowerCase());
 }
 
-function safeFileName(raw: string, index: number, kind: UploadKind): string {
-  const fallback = kind === "pdf" ? `upload-${index + 1}.pdf` : `upload-${index + 1}.txt`;
+function safeFileName(raw: string, index: number): string {
   const base = raw.replace(/[^a-zA-Z0-9._-]+/g, "_").replace(/^\.+/, "");
-  const name = base || fallback;
-  if (kind === "pdf" && !name.toLowerCase().endsWith(".pdf")) {
-    return `${name}.pdf`.slice(0, 120);
-  }
-  return name.slice(0, 120);
+  return (base || `upload-${index + 1}.csv`).slice(0, 120);
 }
 
 function parseDataUrl(url: string): { mime?: string; base64: string } | null {
@@ -206,20 +151,17 @@ function collectUploads(content: unknown): StagedUpload[] {
     if (!base64) continue;
 
     const effectiveMime = mime || dataUrlMime;
-    const kind = classifyUpload(effectiveMime, fileNameCandidate);
-    if (!kind) continue;
+    if (!isStageable(effectiveMime, fileNameCandidate)) continue;
 
     const fileName = safeFileName(
-      fileNameCandidate ?? (kind === "pdf" ? `upload-${index + 1}.pdf` : `upload-${index + 1}.txt`),
-      index,
-      kind
+      fileNameCandidate ?? `upload-${index + 1}.csv`,
+      index
     );
 
     uploads.push({
       fileName,
       path: `${UPLOAD_DIR}/${fileName}`,
-      kind,
-      writeContent: kind === "text" ? decodeBase64Utf8(base64) : base64,
+      writeContent: decodeBase64Utf8(base64),
     });
     index += 1;
   }
@@ -228,17 +170,14 @@ function collectUploads(content: unknown): StagedUpload[] {
 }
 
 function stagingNote(uploads: StagedUpload[]): string {
-  const lines = uploads.map((u) => {
-    if (u.kind === "pdf") {
-      return `- \`${u.path}\` (PDF — extract with pypdf via execute, then read the sibling .txt)`;
-    }
-    return `- \`${u.path}\` (text — read_file / grep directly)`;
-  });
+  const lines = uploads.map((u) => `- \`${u.path}\``);
   const header =
     uploads.length === 1
-      ? "Attached file staged in the sandbox:"
-      : "Attached files staged in the sandbox:";
-  return `${header}\n${lines.join("\n")}`;
+      ? "Attached dataset staged in the sandbox:"
+      : "Attached datasets staged in the sandbox:";
+  return `${header}\n${lines.join(
+    "\n"
+  )}\n\nAnalyze with pandas or DuckDB in the sandbox — do not read the whole file into context.`;
 }
 
 function rewriteContent(content: unknown, uploads: StagedUpload[]): string {
@@ -268,7 +207,7 @@ function messageKey(message: BaseMessage): string {
 
 function alreadyStaged(message: BaseMessage): boolean {
   const kwargs = message.additional_kwargs as Record<string, unknown> | undefined;
-  const staged = kwargs?.[STAGED_KWARG] ?? kwargs?.mda_staged_pdfs;
+  const staged = kwargs?.[STAGED_KWARG];
   return Array.isArray(staged) && staged.length > 0;
 }
 

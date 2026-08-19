@@ -17,6 +17,8 @@ Each subdirectory is a deployable agent project (`mda dev` / `mda deploy`).
 | [`marketing-assistant/`](./marketing-assistant) | Weekday HN (+ optional X) topic scan → tweet drafts on Slack; revise in chat, post manually                     |
 | [`policy-desk/`](./policy-desk)                 | **Policy Desk** — employees sign in, upload handbooks/policies, get cited guidance in a per-thread sandbox      |
 | [`account-concierge/`](./account-concierge)     | **Account Concierge** — member agent behind your product API (session → proxy stamps ingress + user id)         |
+| [`data-analyst/`](./data-analyst)               | **Data Analyst** — drag a CSV into a chat UI; baked sandbox (pandas / DuckDB / matplotlib) analyzes it and writes charts |
+| [`repo-pulse/`](./repo-pulse)                   | **Repo Pulse** — GitHub maintainer analytics; private Docker Hub image + managed `registry` + chart UI |
 
 ## Requirements
 
@@ -57,7 +59,8 @@ owns the name `GITHUB_TOKEN`.
 | `SLACK_BOT_TOKEN`            | for Slack channels                            |
 | `SLACK_SIGNING_SECRET`       | for Slack channels                            |
 | `SLACK_USER_TOKEN`           | for Slack search tools                        |
-| `MDA_GITHUB_TOKEN`           | for GitHub tools (`daily-update`)             |
+| `MDA_GITHUB_TOKEN`           | for GitHub tools (`daily-update`, `repo-pulse`) |
+| `DOCKERHUB_TOKEN`            | private sandbox image pull (`repo-pulse`)     |
 | `LINEAR_API_KEY`             | for Linear tools (`daily-update`)             |
 | `X_BEARER_TOKEN`             | optional X search (`marketing-assistant`)     |
 | `MDA_GUEST_SIGNING_KEY`      | identity runtime (`policy-desk`)              |
