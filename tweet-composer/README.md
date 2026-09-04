@@ -140,8 +140,6 @@ npx mda connections create github \
   --client-id "$GITHUB_CLIENT_ID" \
   --secret-from-env GITHUB_CLIENT_SECRET \
   --scope repo
-
-npx mda connections check
 ```
 
 Notes:
