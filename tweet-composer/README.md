@@ -65,28 +65,113 @@ cp env.example .env
 The UI must know where the hosted agent lives. That **API URL only exists after
 the first agent deploy** — see [Deploy](#deploy).
 
-### Connections
+### Connections (OAuth apps + workspace slots)
 
-User-scoped MCP connections resolve through Agent Auth (deploy or `mda dev`).
-Create the workspace connection rows once (auto-created on deploy / verified on
-`mda dev` when `LANGSMITH_API_KEY` + `LANGSMITH_WORKSPACE_ID` are set):
+Slugs in `connectors/mcp.ts` are `x` and `github`. Each needs:
+
+1. A **BYOT OAuth app** at the provider (client id + secret)
+2. A matching **workspace connection** registered with `mda connections create`
+3. A **per-user Connect** grant the first time that signed-in caller runs the agent
+
+`LANGSMITH_API_KEY` + `LANGSMITH_WORKSPACE_ID` must be set (deploy / `mda
+dev` / local Vite Agent Auth proxy).
+
+#### 1. Create the OAuth apps
+
+Both apps must use LangSmith Agent Auth as the callback:
+
+```text
+https://api.smith.langchain.com/v1/agent-auth/oauth/callback
+```
+
+**GitHub** — [OAuth Apps](https://github.com/settings/developers)
+
+1. **New OAuth App**
+2. Homepage URL: any URL you control (e.g. your UI origin)
+3. **Authorization callback URL**: the Agent Auth URI above
+4. Create the app and generate a **client secret**
+5. Copy **Client ID** + **Client secret**
+
+GitHub OAuth Apps do not declare scopes in the app settings. Scopes are
+requested when the connection is created / when the user authorizes. The MDA
+catalog default for `github` is only `read:user`, which is **not** enough for
+`pull_request_read` on GitHub’s MCP — you must register `repo` (see below).
+
+**X** — [Developer Portal](https://developer.x.com/en/portal/dashboard)
+
+1. Create a Project + App (needs an X developer account with API access that
+   can post)
+2. Under **User authentication settings**, enable **OAuth 2.0**
+3. App type: **Web App** (confidential client with a client secret)
+4. App permissions: **Read and write** (needed to post)
+5. **Callback URI / Redirect URL**: the Agent Auth URI above
+6. Website URL: any URL you control
+7. Save, then copy **Client ID** + **Client Secret**
+
+Catalog defaults for `x` are `tweet.read`, `users.read`, and `offline.access`.
+Posting via `x__post_tweet` also needs **`tweet.write`**, so override scopes
+when creating the connection (see below).
+
+Inspect catalog defaults anytime with `npx mda connections catalog`.
+
+#### 2. Register workspace connections
+
+From `tweet-composer/` (after the agent project exists in the workspace —
+typically after the first `mda deploy` / `npm run deploy:agent`):
 
 ```bash
-npx mda connections create x --type user
-npx mda connections create chris-github --type user
+# Put client secrets in the environment (never commit them).
+export X_CLIENT_ID=...
+export X_CLIENT_SECRET=...
+export GITHUB_CLIENT_ID=...
+export GITHUB_CLIENT_SECRET=...
+
+npx mda connections create x \
+  --oauth x \
+  --client-id "$X_CLIENT_ID" \
+  --secret-from-env X_CLIENT_SECRET \
+  --scope tweet.read \
+  --scope tweet.write \
+  --scope users.read \
+  --scope offline.access
+
+npx mda connections create github \
+  --oauth github \
+  --client-id "$GITHUB_CLIENT_ID" \
+  --secret-from-env GITHUB_CLIENT_SECRET \
+  --scope repo
+
 npx mda connections check
 ```
 
-Slugs must match `connectors/mcp.ts`. On the first run the UI shows a Connect
-card for missing OAuth grants. Each row long-polls Agent Auth session status
-(via the same-origin `/api/agent-auth` proxy), shows a spinner while OAuth is
-in flight, then a checkmark when complete. There is **no Continue button** —
-once every connection succeeds the card auto-resumes the run.
+Notes:
+
+- Slugs **must** match `connectors/mcp.ts` (`x`, `github`). Rename
+  either side if you prefer different names.
+- `--scope` **replaces** catalog defaults (it does not merge). For X, re-list
+  the read scopes plus `tweet.write`. For GitHub, `repo` alone is enough for
+  PR research via `https://api.githubcopilot.com/mcp/readonly`.
+- `--secret-from-env` keeps the client secret out of shell history; omit it to
+  be prompted, or use `--secret-from-file`.
+- There is no update-scopes command: change scopes with
+  `npx mda connections delete <slug> --yes`, then recreate.
+- Confirm with `npx mda connections get github` / `x`.
+
+#### 3. Connect as a signed-in user
+
+On the first run that needs GitHub or X, the UI shows a **Connect
+integrations** card. Each row opens the provider authorize URL, long-polls
+Agent Auth session status (via the same-origin `/api/agent-auth` proxy), then
+shows a checkmark. There is **no Continue button** — once every connection
+succeeds the card auto-resumes the run.
+
+If you previously connected with weaker scopes (e.g. GitHub without `repo`),
+delete the workspace connection, recreate with the scopes above, and reconnect
+in the UI so a new token is issued.
 
 For local Vite, set `LANGSMITH_API_KEY` + `LANGSMITH_WORKSPACE_ID` in `.env` so
 the proxy can call Agent Auth. Hosted UI uses the same values as Cloudflare
 Worker secrets.
-
 
 ## Run locally
 
@@ -141,9 +226,10 @@ secret of the same name for CI.
 
 ### 3. Provision connections + deploy the UI
 
+Register `x` and `github` as in
+[Connections](#connections-oauth-apps--workspace-slots), then:
+
 ```bash
-npx mda connections create x --type user
-npx mda connections create github --type user
 npm run deploy:ui
 # or, once the URL is set, both steps together:
 npm run deploy
@@ -159,5 +245,7 @@ re-run the workflow after copying the API URL from LangSmith.
 ## Security notes
 
 - MDA verifies the Supabase JWT; tools never re-parse the bearer token.
-- GitHub MCP is read-only; X posts require an explicit HITL decision.
+- GitHub MCP is the read-only remote endpoint, but the OAuth token still needs
+  the `repo` scope for PR tools. X posts require `tweet.write` plus an explicit
+  HITL decision.
 - Shared `/memories/agent/` is for procedural voice prefs only — not secrets.

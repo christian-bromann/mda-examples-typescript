@@ -139,7 +139,7 @@ function resolveHint(hint: string): string | undefined {
 /**
  * Resolve a provider icon id for a gate credential.
  *
- * Slug alone is not enough for names like `chris-github`; fall back to
+ * Slug alone is not enough for names like `my-github`; fall back to
  * `connect_url` resource / trusted host so GitHub / X icons still show.
  */
 export function resolveCredentialProviderId(
@@ -154,7 +154,7 @@ export function resolveCredentialProviderId(
     if (fromSlugBase) return fromSlugBase;
   }
 
-  // Strip common prefixes: `chris-github` → `github`, `my-x` → `x`
+  // Strip common prefixes: `team-github` → `github`, `my-x` → `x`
   const slugParts = credential.slug.toLowerCase().split(/[-_]/u);
   for (let i = slugParts.length - 1; i >= 0; i -= 1) {
     const part = slugParts[i];
