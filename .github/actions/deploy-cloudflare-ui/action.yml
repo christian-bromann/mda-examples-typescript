@@ -6,12 +6,24 @@ inputs:
     description: Project directory containing package.json and wrangler.jsonc
     required: true
     default: policy-desk
+  deployment-api-env:
+    description: >
+      Name of the environment variable that holds the LangSmith MDA API URL
+      (must also be exported into the job env from a repository secret).
+    required: true
+    default: POLICY_DESK_DEPLOYMENT_API
   cloudflare-api-token:
     description: Cloudflare API token
     required: true
   cloudflare-account-id:
     description: Cloudflare account ID
     required: true
+  wrangler-secrets:
+    description: >
+      Newline-separated secret names already present in the job env to upload
+      as Cloudflare Worker secrets (e.g. LANGSMITH_API_KEY for tweet-composer).
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -31,14 +43,16 @@ runs:
     - name: Build UI
       shell: bash
       working-directory: ${{ inputs.working-directory }}
+      env:
+        DEPLOYMENT_API_ENV: ${{ inputs.deployment-api-env }}
       run: |
         if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
           echo "::error::Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY"
           exit 1
         fi
         # Obtain from LangSmith after the first agent deploy (API / Resource URL).
-        if [ -z "$POLICY_DESK_DEPLOYMENT_API" ]; then
-          echo "::error::Missing POLICY_DESK_DEPLOYMENT_API — LangSmith MDA deployment URL from the first agent deploy"
+        if [ -z "${!DEPLOYMENT_API_ENV}" ]; then
+          echo "::error::Missing $DEPLOYMENT_API_ENV — LangSmith MDA deployment URL from the first agent deploy"
           exit 1
         fi
         npm run build:ui
@@ -50,3 +64,4 @@ runs:
         accountId: ${{ inputs.cloudflare-account-id }}
         workingDirectory: ${{ inputs.working-directory }}
         command: deploy
+        secrets: ${{ inputs.wrangler-secrets }}

@@ -1,0 +1,8 @@
+node_modules/
+.mda/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+dist/
+.DS_Store

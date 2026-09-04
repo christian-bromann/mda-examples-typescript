@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Worker + static assets: SPA UI plus `/api/agent-auth` session-status proxy.
+  // The Managed Deep Agent itself deploys separately via `mda deploy`.
+  "name": "mda-example-tweet-composer-ui-ts",
+  "main": "worker.ts",
+  "compatibility_date": "2026-08-06",
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  }
+}

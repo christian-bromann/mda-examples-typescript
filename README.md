@@ -16,6 +16,7 @@ Each subdirectory is a deployable agent project (`mda dev` / `mda deploy`).
 | [`daily-update/`](./daily-update)               | Weekday cron digest of GitHub + Linear + Slack activity, custom tools (no connectors), Slack DM delivery, durable memory |
 | [`marketing-assistant/`](./marketing-assistant) | Weekday HN (+ optional X) topic scan → tweet drafts on Slack; revise in chat, post manually                     |
 | [`policy-desk/`](./policy-desk)                 | **Policy Desk** — employees sign in, upload handbooks/policies, get cited guidance in a per-thread sandbox      |
+| [`tweet-composer/`](./tweet-composer)           | **Tweet Composer** — Supabase login + user MCP (GitHub/X); HITL Approve/Reject/Edit before posting              |
 | [`account-concierge/`](./account-concierge)     | **Account Concierge** — member agent behind your product API (session → proxy stamps ingress + user id)         |
 
 ## Requirements
@@ -40,10 +41,11 @@ See each example’s README for secrets, Slack/GitHub/Linear setup, and deploy s
 ## Deploy via GitHub Actions
 
 Use **Actions → Deploy agent → Run workflow** and pick an agent. The workflow
-runs `mda deploy` against LangSmith. When you pick `policy-desk`, it also
-builds and deploys the Vite UI to Cloudflare — after the first agent deploy,
-set `POLICY_DESK_DEPLOYMENT_API` to the LangSmith MDA API URL so the UI can
-reach the hosted agent (see [`policy-desk/README.md`](./policy-desk/README.md#deploy)).
+runs `mda deploy` against LangSmith. When you pick `policy-desk` or
+`tweet-composer`, it also builds and deploys the Vite UI to Cloudflare — after
+the first agent deploy, set `POLICY_DESK_DEPLOYMENT_API` or
+`TWEET_COMPOSER_DEPLOYMENT_API` to the LangSmith MDA API URL so the UI can
+reach the hosted agent (see each example’s README).
 
 Configure these repository secrets first (Settings → Secrets and variables →
 Actions). Use `MDA_GITHUB_TOKEN` for your personal GitHub PAT — Actions already
@@ -60,10 +62,11 @@ owns the name `GITHUB_TOKEN`.
 | `MDA_GITHUB_TOKEN`           | for GitHub tools (`daily-update`)             |
 | `LINEAR_API_KEY`             | for Linear tools (`daily-update`)             |
 | `X_BEARER_TOKEN`             | optional X search (`marketing-assistant`)     |
-| `MDA_GUEST_SIGNING_KEY`      | identity runtime (`policy-desk`)              |
-| `LANGSMITH_WORKSPACE_ID`     | if your key is org-scoped                     |
-| `VITE_SUPABASE_URL`          | `policy-desk` identity + UI                   |
-| `VITE_SUPABASE_ANON_KEY`     | `policy-desk` UI                              |
-| `POLICY_DESK_DEPLOYMENT_API` | `policy-desk` UI — LangSmith MDA API URL (set after the first agent deploy) |
-| `CLOUDFLARE_API_TOKEN`       | `policy-desk` UI                              |
-| `CLOUDFLARE_ACCOUNT_ID`      | `policy-desk` UI                              |
+| `MDA_GUEST_SIGNING_KEY`         | identity runtime (`policy-desk`, `tweet-composer`) |
+| `LANGSMITH_WORKSPACE_ID`        | if your key is org-scoped                     |
+| `VITE_SUPABASE_URL`             | `policy-desk` / `tweet-composer` identity + UI |
+| `VITE_SUPABASE_ANON_KEY`        | `policy-desk` / `tweet-composer` UI           |
+| `POLICY_DESK_DEPLOYMENT_API`    | `policy-desk` UI — LangSmith MDA API URL (set after the first agent deploy) |
+| `TWEET_COMPOSER_DEPLOYMENT_API` | `tweet-composer` UI — LangSmith MDA API URL (set after the first agent deploy) |
+| `CLOUDFLARE_API_TOKEN`          | browser UI examples                           |
+| `CLOUDFLARE_ACCOUNT_ID`         | browser UI examples                           |
