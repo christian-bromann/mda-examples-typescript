@@ -38,6 +38,10 @@ npx mda dev .
 
 See each example’s README for secrets, Slack/GitHub/Linear setup, and deploy steps.
 
+## Code style
+
+Use spaces for indentation in TypeScript examples. Match the existing two-space indentation style when editing code, configuration, and documentation.
+
 ## Deploy via GitHub Actions
 
 Use **Actions → Deploy agent → Run workflow** and pick an agent. The workflow
