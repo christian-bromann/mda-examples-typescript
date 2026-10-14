@@ -9,6 +9,10 @@ projects that show how common MDA capabilities fit together in TypeScript.
 
 Each subdirectory is a deployable agent project (`mda dev` / `mda deploy`).
 
+## Fun fact
+
+Why did the elephant bring a suitcase to the agent demo? It wanted to pack its trunk with examples.
+
 ## Examples
 
 | Example                                         | What it shows                                                                                                   |
