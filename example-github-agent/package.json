@@ -1,0 +1,26 @@
+{
+  "name": "example-github-agent",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "GitHub channel + sandbox example for Managed Deep Agents: an agent that maintains a repository through issues and pull requests.",
+  "scripts": {
+    "build:runtime": "npm --prefix ../../packages/npm run compile",
+    "deploy": "npm run build:runtime && MDA_INSTALL_CHANNEL=npm MDA_BUNDLED_RUNTIME_PATH=$PWD/../../packages/npm/dist cargo run --manifest-path ../../Cargo.toml --release -p mda -- deploy .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "oxlint --config oxlint.json"
+  },
+  "dependencies": {
+    "@langchain/openai": "1.5.12",
+    "@octokit/rest": "^22.0.1",
+    "langchain": "1.5.11",
+    "managed-deepagents": "../../packages/npm"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "typescript": "^7.0.2"
+  },
+  "overrides": {
+    "langsmith": "^0.10.2"
+  }
+}
