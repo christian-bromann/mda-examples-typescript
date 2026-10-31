@@ -71,4 +71,4 @@ owns the name `GITHUB_TOKEN`.
 | `CLOUDFLARE_API_TOKEN`          | browser UI examples                           |
 | `CLOUDFLARE_ACCOUNT_ID`         | browser UI examples                           |
 
-hello world
+Hallo Welt!
