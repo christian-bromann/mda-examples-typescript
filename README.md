@@ -3,6 +3,8 @@
 A collection of [Managed Deep Agents](https://docs.langchain.com/langsmith/managed-deep-agents-overview)
 projects that show how common MDA capabilities fit together in TypeScript.
 
+Hallo Welt!
+
 > [!NOTE]
 > For the same examples in Python, see
 > [mda-examples-python](https://github.com/christian-bromann/mda-examples-python).
