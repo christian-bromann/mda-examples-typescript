@@ -7,17 +7,19 @@ projects that show how common MDA capabilities fit together in TypeScript.
 > For the same examples in Python, see
 > [mda-examples-python](https://github.com/christian-bromann/mda-examples-python).
 
-Each subdirectory is a deployable agent project (`mda dev` / `mda deploy`).
+Each agent example subdirectory is a deployable project (`mda dev` / `mda deploy`);
+`test/` contains repository-level test fixtures.
 
 ## Examples
 
-| Example                                         | What it shows                                                                                                   |
-| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| [`daily-update/`](./daily-update)               | Weekday cron digest of GitHub + Linear + Slack activity, custom tools (no connectors), Slack DM delivery, durable memory |
-| [`marketing-assistant/`](./marketing-assistant) | Weekday HN (+ optional X) topic scan → tweet drafts on Slack; revise in chat, post manually                     |
-| [`policy-desk/`](./policy-desk)                 | **Policy Desk** — employees sign in, upload handbooks/policies, get cited guidance in a per-thread sandbox      |
-| [`tweet-composer/`](./tweet-composer)           | **Tweet Composer** — Supabase login + user MCP (GitHub/X); HITL Approve/Reject/Edit before posting              |
-| [`account-concierge/`](./account-concierge)     | **Account Concierge** — member agent behind your product API (session → proxy stamps ingress + user id)         |
+| Directory                                       | What it shows                                                                                                             |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| [`daily-update/`](./daily-update)               | Weekday cron digest of GitHub + Linear + Slack activity, custom tools (no connectors), Slack DM delivery, durable memory  |
+| [`marketing-assistant/`](./marketing-assistant) | Weekday HN (+ optional X) topic scan → tweet drafts on Slack; revise in chat, post manually                               |
+| [`policy-desk/`](./policy-desk)                 | **Policy Desk** — employees sign in, upload handbooks/policies, get cited guidance in a per-thread sandbox                |
+| [`tweet-composer/`](./tweet-composer)           | **Tweet Composer** — Supabase login + user MCP (GitHub/X); HITL Approve/Reject/Edit before posting                        |
+| [`account-concierge/`](./account-concierge)     | **Account Concierge** — member agent behind your product API (session → proxy stamps ingress + user id)                   |
+| [`test/`](./test)                               | Test fixtures and helpers for validating the example agents                                                               |
 
 ## Requirements
 
