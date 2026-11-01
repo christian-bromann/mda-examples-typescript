@@ -3,7 +3,7 @@
 A collection of [Managed Deep Agents](https://docs.langchain.com/langsmith/managed-deep-agents-overview)
 projects that show how common MDA capabilities fit together in TypeScript.
 
-Hello World
+Hallo Welt!
 
 > [!NOTE]
 > For the same examples in Python, see
