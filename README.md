@@ -1,3 +1,4 @@
+<!-- TypeScript examples for Managed Deep Agents. -->
 # Managed Deep Agents examples (TypeScript)
 
 A collection of [Managed Deep Agents](https://docs.langchain.com/langsmith/managed-deep-agents-overview)
