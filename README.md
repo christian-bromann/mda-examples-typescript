@@ -71,3 +71,5 @@ owns the name `GITHUB_TOKEN`.
 | `TWEET_COMPOSER_DEPLOYMENT_API` | `tweet-composer` UI — LangSmith MDA API URL (set after the first agent deploy) |
 | `CLOUDFLARE_API_TOKEN`          | browser UI examples                           |
 | `CLOUDFLARE_ACCOUNT_ID`         | browser UI examples                           |
+
+Tested with Open SWE expedited review.
